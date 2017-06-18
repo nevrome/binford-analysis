@@ -2,6 +2,8 @@ library(binford)
 library(magrittr)
 library(modelr)
 library(tidyverse)
+library(cowplot)
+library(broom)
 
 main <- binford::LRB
 key <- binford::LRBkey
@@ -45,10 +47,11 @@ ulti_mod_func <- function(df, relation){
   
   df %>% nest %>% 
     mutate(model = map(data, model_func)) %>%
-    mutate(predictions = map2(data, model, add_predictions)) %>%
-    mutate(resids = map2(data, model, add_residuals)) %>%
-    mutate(glance = map(model, broom::glance)) %>%
-    return()
+    mutate(
+      predictions = map2(data, model, add_predictions),
+      resids = map2(data, model, add_residuals),
+      glance = map(model, broom::glance)
+    )
 }
 
 main_sel <- main[, c("subsp.1", "nagp", "density")] %>%
@@ -68,12 +71,14 @@ predictions <- by_subsp %>% unnest(predictions)
 resids <- by_subsp %>% unnest(resids)
 glance <- by_subsp %>% unnest(glance)
 
-predictions %>% ggplot(aes(lnagp, ldensity)) +
-  geom_hex(bins = 20) +
-  geom_line(aes(x = lnagp, y = pred)) +
+predictions_plot <- predictions %>% ggplot(aes(lnagp, ldensity)) +
+  geom_point() +
+  geom_line(aes(x = lnagp, y = pred), size = 1, colour = "red") +
   facet_wrap(~subsp.1)
 
-resids %>% ggplot(aes(lnagp, resid)) +
-  geom_hex(bins = 20) +
-  facet_wrap(~subsp.1)
-  
+resids_plot <- resids %>% ggplot(aes(lnagp, resid)) +
+  geom_point() +
+  facet_wrap(~subsp.1) +
+  geom_ref_line(h = 0, size = 1, colour = "black")
+
+plot_grid(predictions_plot, resids_plot, labels = c("model", "residuals"),  ncol = 1, nrow = 2)
