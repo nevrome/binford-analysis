@@ -30,7 +30,7 @@ predictions <- mod %>% unnest(predictions)
 resids <- mod %>% unnest(resids)
 glance <- mod %>% unnest(glance)
 
-mod$model[[1]] %>% plot
+mod$model[[1]] %>% car::avPlots()
 
 predictions %>% ggplot(aes(hunting, area)) +
   geom_point() +
