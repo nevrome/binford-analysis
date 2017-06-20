@@ -39,21 +39,6 @@ main_sel %>% ggplot(aes(ldensity, lresid)) +
 
 ####
 
-ulti_mod_func <- function(df, relation){
-  
-  model_func <- function(df){
-    lm(relation, data = df)
-  }
-  
-  df %>% nest %>% 
-    mutate(model = map(data, model_func)) %>%
-    mutate(
-      predictions = map2(data, model, add_predictions),
-      resids = map2(data, model, add_residuals),
-      glance = map(model, broom::glance)
-    )
-}
-
 main_sel <- main[, c("subsp.1", "nagp", "density")] %>%
   mutate(lnagp = log10(nagp), ldensity = log10(density)) %>%
   group_by(subsp.1)
@@ -65,7 +50,7 @@ main_sel %>% ggplot(aes(x = lnagp, y = ldensity)) +
 
 relation <- ldensity ~ lnagp
 
-by_subsp <- ulti_mod_func(main_sel, relation)
+by_subsp <- default_model(main_sel, relation)
   
 predictions <- by_subsp %>% unnest(predictions)
 resids <- by_subsp %>% unnest(resids)
