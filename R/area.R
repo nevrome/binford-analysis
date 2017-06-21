@@ -30,8 +30,6 @@ predictions <- mod %>% unnest(predictions)
 resids <- mod %>% unnest(resids)
 glance <- mod %>% unnest(glance)
 
-mod$model[[1]] %>% car::avPlots()
-
 predictions %>% ggplot(aes(hunting, area)) +
   geom_point() +
   geom_line(aes(x = hunting, y = pred), size = 1, colour = "red")
@@ -48,3 +46,48 @@ predictions %>% ggplot(aes(rlow, area)) +
   geom_point() +
   geom_line(aes(x = rlow, y = pred), size = 1, colour = "red")
 
+#### Model analysis ####
+
+mod$model[[1]] -> fit
+
+#
+fit %>% car::avPlots()
+
+#
+MASS::stepAIC(fit, direction="both")
+
+#
+leaps <- leaps::regsubsets(area_relation, data = main_sel, nbest=10)
+plot(leaps, scale="r2")
+
+#
+car::subsets(leaps, statistic="rsq")
+
+#
+relaimpo::calc.relimp(
+    fit, type=c("lmg","last","first","pratt"),
+    rela=TRUE
+  )
+
+boot <- relaimpo::boot.relimp(
+    fit, b = 1000, type = c("lmg","last", "first", "pratt"), rank = TRUE, 
+    diff = TRUE, rela = TRUE
+  )
+relaimpo::booteval.relimp(boot) # print result
+plot(relaimpo::booteval.relimp(boot,sort=TRUE)) # plot result
+
+#
+plot(fit)
+
+#
+area_relation2 <- area ~ hunting + lbio5 + 
+  lrunoff + watrgrc + perwltg +
+  rungrc + sdtemp
+
+fit2 <- main_sel %>% default_model(relation = area_relation2) %$% model
+
+anova(fit, fit2)
+
+#
+library(GGally)
+ggpairs(main_sel)
