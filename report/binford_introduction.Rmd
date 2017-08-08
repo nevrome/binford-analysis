@@ -10,3 +10,7 @@ csl: deutsches-archaologisches-institut.csl
 ---
 
 # Einleitung und Kontextualisierung
+
+> If I can develop continously scaled equations that summarize the relationship...
+> 
+> -- [@binford_constructing_2001, 154.]
