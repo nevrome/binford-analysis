@@ -1,0 +1,5 @@
+^.*\.Rproj$
+^\.Rproj\.user$
+^report$
+^R-analysis$
+^data-raw$

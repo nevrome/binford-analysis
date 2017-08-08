@@ -1,0 +1,17 @@
+Package: binfordanalysis
+Type: Package
+Title: binford
+Version: 0.1.0
+Authors@R: person("Clemens", "Schmid", email = "clemens@nevrome.de", role = c("aut", "cre"))
+Maintainer: Clemens Schmid <clemens@nevrome.de>
+Description: binford.
+Date: 2017-08-08
+License: GPL-2 | file LICENSE
+Encoding: UTF-8
+LazyData: true
+Imports:
+    magrittr (>= 1.5),
+		tidyverse
+RoxygenNote: 6.0.1
+Depends:
+    R (>= 3.4.0)
