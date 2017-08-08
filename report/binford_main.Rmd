@@ -1,0 +1,33 @@
+---
+title: "floet"
+subtitle: "huup"
+author: "Clemens Schmid"
+date: "SS 17"
+header-includes:
+- \usepackage{fancyhdr}
+- \pagestyle{fancy}
+output: 
+  pdf_document:
+    toc: yes 
+    toc_depth: 4
+    number_sections: true
+    fig_caption: yes
+    latex_engine: xelatex
+bibliography: bibliography.bib
+mainfont: "Arial"
+csl: deutsches-archaologisches-institut.csl
+---
+
+\fancyhead{}
+\fancyfoot{}
+\fancyhead[R]{\thepage}
+\fancyhead[L]{schnuup}
+
+\pagebreak
+
+```{r child = 'binford_introduction.Rmd'}
+```
+
+\pagebreak
+
+# Literatur
