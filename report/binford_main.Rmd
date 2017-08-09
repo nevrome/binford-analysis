@@ -1,6 +1,6 @@
 ---
-title: "floet"
-subtitle: "huup"
+title: "Reconstructing Frames of Reference"
+subtitle: "Ein adventure tale auf den Spuren der Datenanalyse Lewis R. Binfords"
 author: "Clemens Schmid"
 date: "SS 17"
 header-includes:
