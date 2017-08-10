@@ -1,0 +1,14 @@
+---
+output: 
+  pdf_document:
+    toc: yes 
+    fig_caption: yes
+    latex_engine: xelatex
+bibliography: bibliography.bib
+mainfont: "Arial"
+csl: deutsches-archaologisches-institut.csl
+---
+
+# Abschließende Gedanken
+
+

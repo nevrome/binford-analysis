@@ -21,7 +21,7 @@ csl: deutsches-archaologisches-institut.csl
 \fancyhead{}
 \fancyfoot{}
 \fancyhead[R]{\thepage}
-\fancyhead[L]{schnuup}
+\fancyhead[L]{\leftmark}
 
 \pagebreak
 
@@ -30,4 +30,19 @@ csl: deutsches-archaologisches-institut.csl
 
 \pagebreak
 
-# Literatur
+```{r child = 'binford_datasets.Rmd'}
+```
+
+\pagebreak
+
+```{r child = 'binford_tale_1.Rmd'}
+```
+
+\pagebreak
+
+```{r child = 'binford_end.Rmd'}
+```
+
+\pagebreak
+
+\section{Literatur}
