@@ -27,7 +27,7 @@ Diese systematische Suche nach übergeordneten, wiederkehrenden Strukturen in de
 >
 > -- [@binford_constructing_2001, 392.]
 
-Da sowohl die Daten als auch das Methodenset publiziert sind, die die Entwicklung dieser und aller anderen Aussagen ermöglicht haben, sollte es möglich sein, ...
+Da sowohl die Daten als auch das Methodenset publiziert sind, die die Entwicklung dieser und aller anderen Aussagen zugrunde liegen, sollte es möglich sein, ...
 
 1. ... auf Grundlage der selben Daten unter Anwendung der selben Methode zu den gleichen Aussagen zu kommen.
 
