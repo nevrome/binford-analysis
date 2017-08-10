@@ -9,6 +9,48 @@ mainfont: "Arial"
 csl: deutsches-archaologisches-institut.csl
 ---
 
+```{r, echo=FALSE}
+library(magrittr)
+```
+
 # Ausbreitungsareale von Jäger- und Sammlergruppen
 
+Im 5. Kapitel "Designing Frames of Reference and Exploring Projections" beschreibt Binford unter anderem eine Methode, Vorhersagen zu Attributen von Jäger- und Sammlergruppen in globalem Maßstab auf Grundlage von ethnographischen und naturräumlichen Daten treffen und über Projektion auf Karten visualisieren zu können. Im Abschnitt "Projecting Hunter-Gatherer Populations to the Entire Earth" gibt es wiederrum einen Unterabschnitt "Using Relational Projections as Frames of Reference", der das Vorgehen anhand eines Beispiels illustriert. Binford schreibt: 
 
+> If I can develop continously scaled equations that summarize the relationship between the properties of hunter-gatherer systems and suites of environmental variables, it is likely that these equations could be used to project estimates for habitats from which there are few, if any, actual cases of hunter-gatherers documented in the resent past. But since such equations summarize interactive ecological relationships that are not confined to particular time periods, they may furnish strong clues about hunter-gatherer organizational variability that will provide a strong platform for subsequent theory building.  
+> 
+> -- [@binford_constructing_2001, 154.]
+
+Das Beispiel konzentiert sich auf die Variable AREA -- die Größe des Areals, das von einer Jäger- und Sammlergruppe relativ exklusiv genutzt wird gemessen in Vielfachen von 100km². Mittels multipler Regression auf Grundlage des Gruppendatensatzes kommt Binford zu folgender Gleichung \ref{eq:area_multi}, die die abhängige Variable AREA in Relation zu mehreren unabhängigen Variablen (siehe Tabelle \ref{tab:variable_description_1}) beschreibt:
+
+\begin{equation} \label{eq:area_multi}
+\begin{aligned}
+\mathit{AREA} = & 10 \mathbin{\char`\^} [3.421431 + \\ 
+                & (0.004732 * \mathit{HUNTING}) + \\
+                & (-0.387229 * \mathit{LBIO5}) + \\
+                & (0.186574 * \mathit{LCOKLM}) + \\
+                & (-0.110286 * \mathit{LRUNOFF}) + \\
+                & (0.175157 * \mathit{WATRGRC}) + \\
+                & (-0.743144 * \mathit{PERWLTG}) + \\
+                & (0.004706) * \mathit{RLOW} + \\
+                & (-0.080339) * \mathit{RUNGRC} + \\
+                & (0.024755 * \mathit{SDTEMP})]
+\end{aligned}
+\end{equation}
+
+```{r echo=FALSE, fig.cap="\\label{tab:variable_description_1}"}
+tibble::tribble(
+  ~colA,  ~colB, ~Einheit,
+  "AREA", "Größe des Areals, das von einer Jäger- und Sammlergruppe relativ exklusiv genutzt wird", "Vielfache von 100km²",
+  "HUNTING", "Ernährungsanteil tierischer, terrestrischer Ressourcen", "%", 
+  "LBIO5", "", "",
+  "LCOKLM", "Distanz zur nächstgelegenen, marinen Küste", "log10(km)", 
+  "LRUNOFF", "", "", 
+  "WATRGRC", "Anzahl der Monate im Wachstumszeitraum, in denen Wasser im Boden gespeichert bleibt", "Anzahl", 
+  "PERWLTG", "", "", 
+  "RLOW", "Niederschlagsmenge im trockensten Monat des Jahres", "Millimeter", 
+  "RUNGRC", "", "",
+  "SDTEMP", "Standardabweichung der mittleren Monatstemperatur", "keine Einheit"
+) %>%
+  knitr::kable(format = "pandoc", caption = "\\label{tab:variable_description_1} Kurzbeschreibung der Variablen in Binfords Ergebnismodell.")
+```
