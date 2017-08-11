@@ -36,7 +36,4 @@ vignettes/*.pdf
 # Rendered documents and knitr cache
 report/*.pdf
 report/*_cache
-<<<<<<< HEAD
 report/*_files
-=======
->>>>>>> 46c03f3a66e3bd5797169262fbdc0bc94eacfb3e
