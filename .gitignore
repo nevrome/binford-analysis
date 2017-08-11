@@ -33,5 +33,6 @@ vignettes/*.pdf
 *.knit.md
 .Rproj.user
 
-# Rendered documents
+# Rendered documents and knitr cache
 report/*.pdf
+report/*_cache
