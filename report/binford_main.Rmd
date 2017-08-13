@@ -1,11 +1,12 @@
 ---
 title: "Reconstructing Frames of Reference"
-subtitle: "Ein adventure tale auf den Spuren der Datenanalyse Lewis R. Binfords"
+subtitle: "Auf den Spuren der Datenanalyse Lewis R. Binfords"
 author: "Clemens Schmid"
 date: "SS 17"
 header-includes:
 - \usepackage{fancyhdr}
 - \pagestyle{fancy}
+- \usepackage[font=small,labelfont=bf]{caption}
 output: 
   pdf_document:
     pandoc_args: [
@@ -13,9 +14,9 @@ output:
     ]
     toc: yes
     toc_depth: 4
-    number_sections: true
     fig_caption: yes
     latex_engine: xelatex
+geometry: margin=1.5cm
 bibliography: bibliography.bib
 mainfont: "Arial"
 csl: deutsches-archaologisches-institut.csl
