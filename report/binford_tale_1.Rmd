@@ -53,7 +53,7 @@ Das Beispiel konzentiert sich auf die Variable AREA -- die Größe des Areals, d
 # create table data
 tibble::tribble(
   ~colA,  ~colB, ~Einheit,
-  "AREA", "Größe des Areals, das von einer Jäger- und Sammlergruppe relativ exklusiv genutzt wird", "Vielfache von 100km²",
+  "AREA", "Größe des Areals, das von einer Jäger- und Sammlergruppe relativ exklusiv genutzt wird", "100km²",
   "HUNTING", "Ernährungsanteil tierischer, terrestrischer Ressourcen", "%", 
   "LBIO5", "Primäre (pflanzliche) Biomasse", "log(kg/m^2)",
   "LCOKLM", "Distanz zur nächstgelegenen, marinen Küste", "log10(km)", 
@@ -71,14 +71,14 @@ tibble::tribble(
     booktabs = T
   ) %>%
   kableExtra::column_spec(1, bold = TRUE) %>%
-  kableExtra::column_spec(2, width = "10em")
+  kableExtra::column_spec(2, width = "13em")
 ```
 
 Binford hat seine Analyse in SPSS (Version 6.1.2) ausgeführt. Ein Skriptprotokoll der Analysesession liegt mir nicht vor. Um die Ergebnis in Form der Modellgleichung zu reproduzieren, werde ich nun also zunächst versuchen, das Vorgehen so gut wie möglich nachzuvollziehen. Dafür steht mir eine hoffentlich gleiche oder zumindest hochgradig ähnliche Version des oben beschriebene Gruppendatensatz zu Verfügung. Ich weiß weiterhin, dass Binford sein Modell mittels der Methode schrittweiser, Multipler Regression ermittelt hat. Unabhängige Variablen, die sich kollinear zu anderen unabhägigen Variablen verhalten, hat er entfernt. Die abschließende Entscheidung über das beste Modell hat er unter Beachtung von den Indikatorgrößen $R^2$ und Standardfehler getroffen. 
 
 ## Datensatz
 
-Ein wesentliches Wissendefizit besteht bezüglich der Information, in welcher Reihenfolge und mit welcher Rechtfertigung in den Schritten der Multiplen Regression Variablen entfernt wurden. Schon die Angabe welche Varbiablen im Ausgangsdatensatz berücksichtigt wurden ist unscharf. Immerhin: Da Multiple Regression nur auf Variablen der Intervall- oder Ratioskala anwendbar ist, lässt sich eine erste Eingrenzung vornehmen. Der Metadatensatz LRBkey verfügt hierzu über die Spalte *type*, die zu jeder Variable ein Skalenniveau angibt. Leider wird nur zwischen "categorical" und "ordinal" unterschieden. Dabei werden alle Variablen jenseits der Nominalskala als "ordinal" angesprochen. Das genügt nicht, um automatisiert alle intervall- und verhältnisskalieren Variablen auszuwählen. Aus diesem Grund habe ich selbst die Spalte *type_exp* im Metadatensatz hinzugefügt, und nach meiner Einschätzung auf Grundlage des Wertebereichs und der Beschreibung eine Zuordnung zu einem der vier Skalenniveaus "nominal", "ordinal", "interval" und "ratio" vorgenommen. Tabelle \ref{tab:variable_key_example} illustriert die Unterschiede zwischen der vorhandenen und meiner neu vorgenommenen Zuordnung für ein paar zufällig ausgewählte Variablen. Abbildung \ref{fig:level_of_meas_bar} zeigt, wie sich die Reevaluation durch die in *type_exp* deutlich akzentuiertere Verteilung der Skalenniveaus auswirkt. 
+Ein wesentliches Wissendefizit besteht bezüglich der Information, in welcher Reihenfolge und mit welcher Rechtfertigung in den Schritten der Multiplen Regression Variablen entfernt wurden. Schon die Angabe welche Variablen im Ausgangsdatensatz berücksichtigt wurden ist unscharf. Immerhin: Da Multiple Regression nur auf Variablen der Intervall- oder Ratioskala anwendbar ist, lässt sich eine erste Eingrenzung vornehmen. Der Metadatensatz LRBkey verfügt hierzu über die Spalte *type*, die zu jeder Variable ein Skalenniveau angibt. Leider wird nur zwischen "categorical" und "ordinal" unterschieden. Dabei werden alle Variablen jenseits der Nominalskala als "ordinal" angesprochen. Das genügt nicht, um automatisiert alle intervall- und verhältnisskalieren Variablen auszuwählen. Aus diesem Grund habe ich selbst die Spalte *type_exp* im Metadatensatz hinzugefügt, und nach meiner Einschätzung auf Grundlage des Wertebereichs und der Beschreibung eine Zuordnung zu einem der vier Skalenniveaus "nominal", "ordinal", "interval" und "ratio" vorgenommen. Tabelle \ref{tab:variable_key_example} illustriert die Unterschiede zwischen der vorhandenen und meiner neu vorgenommenen Zuordnung für ein paar zufällig ausgewählte Variablen. Abbildung \ref{fig:level_of_meas_bar} zeigt, wie sich die Reevaluation durch die in *type_exp* deutlich akzentuiertere Verteilung der Skalenniveaus auswirkt. 
 
 ```{r load binford data, cache=TRUE, message=FALSE, warning=FALSE}
 # load data
@@ -184,9 +184,11 @@ na_pro_var %>%
   
 # calculate proportions for text
 without_na <- ncol(sel1) - nrow(na_pro_var)
-without_na_percent <- without_na/ncol(sel1)
+without_na_percent <- round(without_na/ncol(sel1)*100)
 ```
 
-Wahrscheinlich wird es sich als sinnvoll erweisen, die Variablen mit äußert geringem Vorkommen aus der Analyse auszuschließen. Immerhin `r without_na` der `r ncol(sel1)` (`r without_na_percent`%) Variablen besitzen überhaupt keine Lehrstellen. Der Datensatz ist bemerkenswert vollständig. 
+Wahrscheinlich wird es sich als sinnvoll erweisen, die Variablen mit äußert geringem Vorkommen aus der Analyse auszuschließen. Immerhin `r without_na` der `r ncol(sel1)` ($\approx$ `r without_na_percent`%) Variablen besitzen überhaupt keine Lehrstellen. Der Datensatz ist bemerkenswert vollständig. 
 
 ## Multiple Regression
+
+Multiple Lineare Regression ist ein Verfahren der Multivariaten Statistik, das die Erklärung und Vorhersage einer abhängigen Variable durch mehrere unabhängige Variablen erlaubt^[Zitat].
