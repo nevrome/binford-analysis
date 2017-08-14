@@ -38,7 +38,7 @@ Da sowohl die Daten als auch das Methodenset publiziert sind, die die Entwicklun
 
 2. ... Aussagen mit anderen Daten und anderen Methoden zu rekonstruieren und gegebenenfalls durch verbesserte Aussagen zu ersetzen.
 
-Der vorliegenden Aufsatz dient dazu Binfords wissenschaftlichen Selbstanspruch zu prüfen, diese Grundlage wissenschaftlichen Arbeitens zu üben und -- im Kontext des Hauptseminars -- meine Methodenkompetenz auszubauen. Insbesondere Modelleinpassung mittels Regressionsanalyse^[Buch von Oliver und Daniel] soll vertieft zur Anwendung kommen.
+Der vorliegenden Aufsatz dient dazu Binfords wissenschaftlichen Selbstanspruch zu prüfen, diese Grundlage wissenschaftlichen Arbeitens zu üben und -- im Kontext des Hauptseminars -- meine Methodenkompetenz auszubauen. Insbesondere Modelleinpassung mittels Regressionsanalyse^[@nakoinz_modelling_2016, 87-105.] soll vertieft zur Anwendung kommen.
 
 Vor diesem Hintergrund möchte ich weder versuchen, einen Abriss der archäologischen oder archäologietheoretischen Leitgedanken des Buches nachzuzeichnen, noch seine kontroverse Rezeption aufzugreifen. Kritiker haben Binford vorgeworfen ... ^[Zitate]. Diese durchaus berechtigten Bedenken, mit denen auch dieser Aufsatz konfrontiert werden kann, will ich hier beiseite lassen und mich stattdessen voll auf die explorative Datenanalyse konzentrieren. Ein adventure tale auf den Spuren Binfords. 
 

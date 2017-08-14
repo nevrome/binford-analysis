@@ -10,3 +10,15 @@ csl: deutsches-archaologisches-institut.csl
 ---
 
 # Datensätze
+
+Binford's komplexes Unterfangen erfordert Forschungsdaten, die sowohl für Kultur- als auch Naturphänomene ein möglichst breites Set an Observationen enthalten. Dabei muss einerseits die Anzahl als auch die Variabilität der Beobachtungen ausreichend groß, andererseits auch ein sinnvolles Set an Kennwerten und Proxies erfasst sein. Die Zusammenstellung der anthropologischen Daten ist besonders problematisch, da der Vergleich eine selten angewandte Systematisierung ethnographischer Datenaufnahme erfordert. 
+
+> It took me two years to develop the data bases dealing with the world's environments and the geographical distribution of documented hunter-gatherers. Once this aspect of the work was completed, it became clear that the limited range of hunter-gatherer characteristics upon which cross-cultural studies had focused was not really relevant to most of the issues that I hoped to address in my book.
+>  
+> -- [@binford_constructing_2001, 2.]
+
+Ein großer Teil des Buches beschäftigt sich mit der Beschreibung und Kontextualisierung von Variablen, die Binford aus der geographischen oder anthropologischen Literatur entnommen und anschließend gesammelt oder gegebenenfalls berechnet hat. Das Ergebnis ist ein komplexer Datenbestand, der im Verlauf des Buches immer weiter in die Breite wächst. Es ist Amber Johnson, Doug White und Anthon Eff zu verdanken, dass der Datensatz heute in gegebnüber der abgedruckten Form noch einmal deutlich erweiterter Form digitalisiert und leicht zugänglich vorliegt ^[http://ajohnson.sites.truman.edu/data-and-program/ [14.8.2017]]. Über ein Paket der Statistikprogrammiersprache R, das Ben Marwick zusammengestellt hat, lässt sich auf die Daten besonders bequem zugreifen^[@marwick_binford:_2016]. 
+
+Binford hat mit zwei Hauptdatensätze gearbeitet: Eine Tabelle mit Informationen zu 339 ethnographisch aufgenommenen Jäger- und Sammlergruppen und eine Tabelle mit Athmosphärendaten von 1429 weltweit verteilten Wetterstationen, die anhand ihrer Position in Vegetationszonen ausgewählt wurden. Johnson, White und Eff haben ersteren Datensatz strukturell überarbeitet und eine Auswahl von 507 gesammelten und berechneten Variablen zusammengestellt. Dieser Datensatz **LRB** (im folgenden auch "Gruppendatensatz") liegt entsprechend in Form einer .csv-Tabelle mit 339 Zeilen und 507 Spalten vor. Der Metadatensatz **LRBkey** steht ebenfalls als .csv-Tabelle zur Verfügung und enthält zu jeder der 507 Variablen Informationen wie semantische Kurzbeschreibung, Skalennievau und Fehlstellen. Auch der Wetterstationendatensatz ist in dieser Form zugänglich. 
+
+Letzterer ist relativ einfach systematisch erweiterbar. In diesem Fall kann für die Berechnung der von Binford hinzugefügten abhängigen Größen sowohl im Wetterstationen als auch im Gruppendatensatz auf die Java-Software EnvCalc2.1 zurückgegriffen werden. Sie ist seit 2001 aus dem von Binfords Arbeitsgruppe entwickelten Programmcode hervorgegangen und wurde zuletzt 2014 aktualisiert. 
