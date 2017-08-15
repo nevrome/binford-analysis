@@ -161,7 +161,7 @@ sel1 <- main %>%
 
 Auf dieser Grundlage ist es jetzt also möglich, einen Ausgangsdatensatz zusammenstellen, der zwar alle `r nrow(sel1)` Gruppen aber nur die `r ncol(sel1)` interval- und ratioskalierten Variablen enthält. Hier fällt allerdings gleich ein erstes Defizit dieses Datensatzes auf: Einige Variablen haben sehr wenige Einträge, d.h. der Wert der entsprechenden Variable wurde nur bei wenigen Gruppen aufgenommen. Abbildung \ref{fig:is_na_bar} enthält ein Histogramm der Fehlstellenanzahl. 
 
-```{r na histogram, fig.cap="\\label{fig:is_na_bar}Verteilung der Fehlstellenanzahl in metrisch skalierten Variablen und den zugehörigen Beobachtungen (Gruppen). Die Klassenbreite der Histogramme beträgt 15. Variablen und Gruppen ohne Fehlstellen wurden für die Visualisierung ausgeschlossen."}
+```{r na histogram, warning=FALSE, fig.cap="\\label{fig:is_na_bar}Verteilung der Fehlstellenanzahl in metrisch skalierten Variablen und den zugehörigen Beobachtungen (Gruppen). Die Klassenbreite der Histogramme beträgt 15. Variablen und Gruppen ohne Fehlstellen wurden für die Visualisierung ausgeschlossen. Die horizontale, rote Linie im Variablenhistogramm markiert die Grenze oberhalb der Variablen aus der weiteren Analyse entfernt wurden."}
 # get data.frame with number of na per variable
 na_pro_var <- sel1 %>% 
   purrr::map(
@@ -186,10 +186,14 @@ na_pro_obs <- sel1 %>% t %>% as.data.frame() %>%
     value != 0
   )
 
+# define threshold above which variables will be removed below
+na_vars_removal_threshold <- 1/3
+
 # plot histogram for variables
 na_vars_plot <- na_pro_var %>%
   ggplot(aes(x = value)) +
   geom_histogram(binwidth = 15, fill = "black") +
+  geom_vline(aes(xintercept = na_vars_removal_threshold*ncol(sel1)), color = "red", size = 1) + 
   theme_bw(base_size = 16) +
   ylab("Anzahl der Variablen") +
   xlab("Anzahl der Fehlstellen") +
@@ -210,39 +214,39 @@ na_obs_plot <- na_pro_obs %>%
 cowplot::plot_grid(na_vars_plot, na_obs_plot)
 ```
 
-```{r prepare na amounts}
+```{r prepare na values to be printed}
 # calculate proportions for text
 without_na <- ncol(sel1) - nrow(na_pro_var)
 without_na_percent <- round(without_na/ncol(sel1)*100)
 ```
 
-Immerhin `r without_na` der `r ncol(sel1)` ($\approx$ `r without_na_percent`%) Variablen besitzen allerdings überhaupt keine Lehrstellen. Der Datensatz ist bemerkenswert vollständig. Bei den gruppenbezogenen Beobachtungen ist das Bild ausgeglichener: Für alle Gruppen liegt eine große Menge an Werten vor.
+```{r remove na variables}
+# remove vars with more na values than 1/3 * total amount of variables
+na_vars_part <- na_pro_var %>%
+  dplyr::filter(
+    value > (na_vars_removal_threshold)*ncol(sel1)
+  )
 
-```{r}
-# sel1 %>%
-#   apply(
-#     2,
-#     function(x) {all(is.na(x))}
-#   ) %>% any
-
-# na_pro_var %>%
-#   dplyr::filter(
-#     value == nrow(sel1)
-#   )
-
-# sel2 <- sel1 %>%
-#   dplyr::select(-female.kg)
-
+sel2 <- sel1 %>%
+  dplyr::select(
+    -dplyr::one_of(na_vars_part$key)
+  )
 ```
+
+Immerhin `r without_na` der `r ncol(sel1)` ($\approx$ `r without_na_percent`%) Variablen besitzen allerdings überhaupt keine Lehrstellen. Der Datensatz ist bemerkenswert vollständig. Ich habe mich entschieden, alle `r nrow(na_vars_part)` Variablen, bei denen mehr als `r paste(MASS::fractions(na_vars_removal_threshold))` der Werte fehlen aus der Analyse auszuschließen, um Problemen bei der Regressionsanalyse vorzubeugen. In Abbildung \ref{fig:is_na_bar} ist die Demarkationslinie rot eingetragen. Bei den gruppenbezogenen Beobachtungen ist das Bild insgesamt ausgeglichener: Für alle Gruppen liegt eine große Menge an Werten vor. Hier sind keine Änderungen erforderlich.
 
 ## Multiple Regression
 
 Multiple Lineare Regression ist ein Verfahren der Multivariaten Statistik, das die Erklärung und Vorhersage einer abhängigen Variable durch mehrere unabhängige Variablen erlaubt^[@backhaus_multivariate_2008, 52-53/64-65.]. Die Berechnung der Regressionsparameter funktioniert wie bei der Einfachen Regressionsanalyse durch Reduktion der Fehlerquadrate. Das Modellergebnis ist einerseits natürlich abhängig von den Eingabevariablen, andererseits aber auch -- zumindest wenn sie nicht vollständig unkorreliert sind -- von deren Eingabereihenfolge. Da im Fall der vorliegenden Analyse keine theoretischen oder sachlogischen Überlegungen Eingang finden sollen, die die Variablenauswahl determinieren würden, müssten eigentlich alle Permutationen von Auswahl und Reihenfolge betrachtet werden. Bei `r ncol(sel1) - 1` unabhängigen Variablen ist allerdings die Anzahl allein der Permutationen weit größer als praktisch in irgend einer Form verarbeitbar ($200! \approx 7.887*10^{374}$). Aus diesem Grund muss auf das Verfahren der Schrittweisen Regressionsanalyse zurückgegriffen werden, das mittels Prüfgrößen selbständig und in verhältnismäßig wenigen Iterationsschritten eine Variablenauswahl trifft^[@backhaus_multivariate_2008, 100-105.].  
 
+Ich habe mich hier für die Implementierung dieses Verfahrens in der Funktion `stepAIC()` des R Pakets MASS^[@venables_modern_2002] entschieden. `stepAIC()` erlaubt ...
 
-```{r}
-# model <- lm(area ~ ., data = sel1)
-# 
+Der folgende Codeabschnitt dokumentiert mein Vorgehen:  
+
+```{r stewise multiple regression, echo = TRUE}
+# create initial linear model
+model <- lm(area ~ ., data = sel2)
+ 
 # MASS::stepAIC()
 ```
 
