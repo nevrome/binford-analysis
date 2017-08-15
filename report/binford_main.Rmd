@@ -27,6 +27,7 @@ csl: deutsches-archaologisches-institut.csl
 \fancyhead[R]{\thepage}
 \fancyhead[L]{\leftmark}
 
+\parskip 4pt
 
 ```{r child = 'binford_introduction.Rmd'}
 ```
