@@ -161,7 +161,7 @@ sel1 <- main %>%
 
 Auf dieser Grundlage ist es jetzt also möglich, einen Ausgangsdatensatz zusammenstellen, der zwar alle `r nrow(sel1)` Gruppen aber nur die `r ncol(sel1)` interval- und ratioskalierten Variablen enthält. Hier fällt allerdings gleich ein erstes Defizit dieses Datensatzes auf: Einige Variablen haben sehr wenige Einträge, d.h. der Wert der entsprechenden Variable wurde nur bei wenigen Gruppen aufgenommen. Abbildung \ref{fig:is_na_bar} enthält ein Histogramm der Fehlstellenanzahl. 
 
-```{r na histogram, fig.cap="\\label{fig:is_na_bar}Verteilung der Fehlstellenanzahl in intervall- und ratioskalierten Variablen. Die Klassenbreite des Histogramms beträgt 20. Variablen ohne Fehlstellen wurden ausgeschlossen."}
+```{r na histogram, fig.cap="\\label{fig:is_na_bar}Verteilung der Fehlstellenanzahl in metrisch skalierten Variablen und den zugehörigen Beobachtungen (Gruppen). Die Klassenbreite der Histogramme beträgt 15. Variablen und Gruppen ohne Fehlstellen wurden für die Visualisierung ausgeschlossen."}
 # get data.frame with number of na per variable
 na_pro_var <- sel1 %>% 
   purrr::map(
@@ -174,22 +174,57 @@ na_pro_var <- sel1 %>%
     value != 0
   )
 
-# plot histogram
-na_pro_var %>%
+# get data.frame with number of na per observation
+na_pro_obs <- sel1 %>% t %>% as.data.frame() %>%
+  purrr::map(
+    ~sum(is.na(.))
+  ) %>% 
+  as.data.frame() %>% 
+  tidyr::gather() %>%
+  # remove variables with zero na
+  dplyr::filter(
+    value != 0
+  )
+
+# plot histogram for variables
+na_vars_plot <- na_pro_var %>%
   ggplot(aes(x = value)) +
-  geom_histogram(binwidth = 20, fill = "black") +
+  geom_histogram(binwidth = 15, fill = "black") +
   theme_bw(base_size = 16) +
   ylab("Anzahl der Variablen") +
-  xlab("Anzahl der Fehlstellen")
-  
+  xlab("Anzahl der Fehlstellen") +
+  coord_flip() +
+  xlim(-20, 340)
+
+# plot histogramm for observations
+na_obs_plot <- na_pro_obs %>%
+  ggplot(aes(x = value)) +
+  geom_histogram(binwidth = 15, fill = "black") +
+  theme_bw(base_size = 16) +
+  ylab("Anzahl der Gruppen") +
+  xlab("") +
+  coord_flip() +
+  xlim(-20, 340)
+
+# combine plots
+cowplot::plot_grid(na_vars_plot, na_obs_plot)
+```
+
+```{r prepare na amounts}
 # calculate proportions for text
 without_na <- ncol(sel1) - nrow(na_pro_var)
 without_na_percent <- round(without_na/ncol(sel1)*100)
 ```
 
-Variablen, für die keine Werte aufgenommen wurden, müssen entfernt werden. Immerhin `r without_na` der `r ncol(sel1)` ($\approx$ `r without_na_percent`%) Variablen besitzen allerdings überhaupt keine Lehrstellen. Der Datensatz ist bemerkenswert vollständig.
+Immerhin `r without_na` der `r ncol(sel1)` ($\approx$ `r without_na_percent`%) Variablen besitzen allerdings überhaupt keine Lehrstellen. Der Datensatz ist bemerkenswert vollständig. Bei den gruppenbezogenen Beobachtungen ist das Bild ausgeglichener: Für alle Gruppen liegt eine große Menge an Werten vor.
 
 ```{r}
+# sel1 %>%
+#   apply(
+#     2,
+#     function(x) {all(is.na(x))}
+#   ) %>% any
+
 # na_pro_var %>%
 #   dplyr::filter(
 #     value == nrow(sel1)
@@ -206,7 +241,7 @@ Multiple Lineare Regression ist ein Verfahren der Multivariaten Statistik, das d
 
 
 ```{r}
-# model <- lm(area ~ ., data = sel2)
+# model <- lm(area ~ ., data = sel1)
 # 
 # MASS::stepAIC()
 ```
