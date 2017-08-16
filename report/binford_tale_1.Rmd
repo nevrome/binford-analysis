@@ -247,24 +247,41 @@ Ich habe mich hier für die Implementierung eines solchen Verfahrens in der Funk
 
 Zunächst erfolgt die Berechnung des Ausgangsmodells mittels der Funktion `lm()` aus dem R Basispaket stats:
 
-```{r create first model, echo = TRUE}
+```{r create initial model, echo = TRUE, cache=TRUE}
 initial_model <- lm(area ~ ., data = sel2)
 ```
 
-```{r plot first model, warning=FALSE, fig.height=7, fig.cap="\\label{fig:initial_model_plot} \\newline  \\textbf{Residuals vs Fitted:} Streuung der Residuen in Abhängigkeit von der Modellvorhersage. Kann als Indikator für nicht lineare Trends dienen. \\newline \\textbf{Normal Q-Q:} Sortierte Residuenwerte abgetragen auf die theoretischen Quantile einer Normalverteilung. Zeigt, inwiefern die Residuenverteilung der Normalverteilung entspricht. \\newline \\textbf{Scale-Location:} Vergleiche Residuals vs Fitted. Die Umskalierung erlaubt es, die Homogenität der Residuenvarianz (Homoskedastizität) besser zu beurteilen.  \\newline \\textbf{Residuals vs Leverage:} Standardisierte Residuenwerte abgetragen auf ein Maß zur Einschätzung des Einflusses auf das Modellergebnis. Dient zum Identifizieren von einflussreichen Ausreißern. ^[Zum Verständnis der diagnostischen Plots: http://data.library.virginia.edu/diagnostic-plots/ [16.8.2017]]"}
+```{r plot initial model, warning=FALSE, fig.height=7, fig.cap="\\label{fig:initial_model_plot}Diagnostische Plots für das Ausgangsmodell. \\newline  \\textbf{Residuals vs Fitted:} Streuung der Residuen in Abhängigkeit von der Modellvorhersage. Kann als Indikator für nicht lineare Trends dienen. \\newline \\textbf{Normal Q-Q:} Sortierte Residuenwerte abgetragen auf die theoretischen Quantile einer Normalverteilung. Zeigt, inwiefern die Residuenverteilung der Normalverteilung entspricht. \\newline \\textbf{Scale-Location:} Vergleiche Residuals vs Fitted. Die Umskalierung erlaubt es, die Homogenität der Residuenvarianz (Homoskedastizität) besser zu beurteilen.  \\newline \\textbf{Residuals vs Leverage:} Standardisierte Residuenwerte abgetragen auf ein Maß zur Einschätzung des Einflusses auf das Modellergebnis. Dient zum Identifizieren von einflussreichen Ausreißern. ^[Zum Verständnis der diagnostischen Plots: http://data.library.virginia.edu/diagnostic-plots/ [16.8.2017]]"}
 opar <- par(mfrow=c(2,2)) 
-
 plot(initial_model)
-
 par(opar) 
 ```
 
-Abbildung \ref{fig:initial_model_plot} zeigt für dieses Modell die vier diagnostischen Standardplots, die die Funktion `plot.lm()` aus stats bereitstellt. 
+```{r identify bad observations}
+# visual obersvations at the plots allow identification of outliers:
+outies <- c(298, 306, 308)
+outies_names <- main$X[outies]
 
-```{r stewise multiple regression}
-#MASS::stepAIC(model)
 ```
 
+Abbildung \ref{fig:initial_model_plot} zeigt für dieses Modell die vier diagnostischen Standardplots, die die Funktion `plot.lm()` aus stats bereitstellt. Für geringe Arealgrößen geben die Residuen Anlass zur Annahme, dass zwischen abhängiger und unabhägigen Variablen eine nicht-lineare Beziehung besteht, die durch das Modell schlecht abgebildet wird. Einige Beobachtungen (`r paste0(paste0(outies, ": ", outies_names), collapse = ", ")`) treten als klare Ausreißer auf, die ich zunächst allerdings ignorieren möchte. Stattdessen ein erster Durchlauf der automatischen, schrittweisen Modellreduktion: 
 
+```{r stewise multiple regression, dependson="create first model", cache=TRUE, message=FALSE, echo=TRUE}
+model1 <- MASS::stepAIC(initial_model, trace = FALSE)
+```
 
+```{r plot model1, dependson="stewise multiple regression", cache=TRUE, warning=FALSE, fig.height=7, fig.cap="\\label{fig:model1_plot}Diagnostische Plots für das Modell nach dem ersten Durchlauf von `stepAIC()`."}
+opar <- par(mfrow=c(2,2)) 
+plot(model1)
+par(opar) 
+```
 
+Folgende Variablen wurden in dieser Reihenfolge entfernt:
+
+```{r}
+model1$anova %>% as.data.frame() %>%   knitr::kable(
+    format = "latex",
+    caption = "\\label{tab:huup}Kurzbeschreibung der Variablen in Binfords Ergebnismodell.",
+    booktabs = T
+  )
+```
