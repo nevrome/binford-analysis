@@ -237,17 +237,32 @@ Immerhin `r without_na` der `r ncol(sel1)` ($\approx$ `r without_na_percent`%) V
 
 ## Multiple Regression
 
-Multiple Lineare Regression ist ein Verfahren der Multivariaten Statistik, das die Erklärung und Vorhersage einer abhängigen Variable durch mehrere unabhängige Variablen erlaubt^[@backhaus_multivariate_2008, 52-53/64-65.]. Die Berechnung der Regressionsparameter funktioniert wie bei der Einfachen Regressionsanalyse durch Reduktion der Fehlerquadrate. Das Modellergebnis ist einerseits natürlich abhängig von den Eingabevariablen, andererseits aber auch -- zumindest wenn sie nicht vollständig unkorreliert sind -- von deren Eingabereihenfolge. Da im Fall der vorliegenden Analyse keine theoretischen oder sachlogischen Überlegungen Eingang finden sollen, die die Variablenauswahl determinieren würden, müssten eigentlich alle Permutationen von Auswahl und Reihenfolge betrachtet werden. Bei `r ncol(sel1) - 1` unabhängigen Variablen ist allerdings die Anzahl allein der Permutationen weit größer als praktisch in irgend einer Form verarbeitbar ($200! \approx 7.887*10^{374}$). Aus diesem Grund muss auf das Verfahren der Schrittweisen Regressionsanalyse zurückgegriffen werden, das mittels Prüfgrößen selbständig und in verhältnismäßig wenigen Iterationsschritten eine Variablenauswahl trifft^[@backhaus_multivariate_2008, 100-105.].  
+Multiple Lineare Regression ist ein Verfahren der Multivariaten Statistik, das die Erklärung und Vorhersage einer abhängigen Variable durch mehrere unabhängige Variablen erlaubt^[@backhaus_multivariate_2008, 52-53/64-65.]. Die Berechnung der Regressionsparameter funktioniert wie bei der Einfachen Regressionsanalyse durch Reduktion der Fehlerquadrate. Das Modellergebnis ist einerseits natürlich abhängig von den Eingabevariablen, andererseits aber auch -- zumindest wenn sie nicht vollständig unkorreliert sind -- von deren Eingabereihenfolge. Da im Fall der vorliegenden Analyse keine theoretischen oder sachlogischen Überlegungen Eingang finden sollen, die die Variablenauswahl determinieren würden, müssten eigentlich alle Permutationen von Auswahl und Reihenfolge betrachtet werden. Bei `r ncol(sel2) - 1` unabhängigen Variablen ist allerdings die Anzahl allein der Permutationen weit größer als praktisch in irgend einer Form verarbeitbar ($200! \approx 7.887*10^{374}$). Aus diesem Grund muss auf ein Verfahren der Schrittweisen Regressionsanalyse zurückgegriffen werden, das mittels Prüfgrößen selbständig und in verhältnismäßig wenigen Iterationsschritten eine Variablenauswahl trifft^[@backhaus_multivariate_2008, 100-105.].  
 
-Ich habe mich hier für die Implementierung dieses Verfahrens in der Funktion `stepAIC()` des R Pakets MASS^[@venables_modern_2002] entschieden. `stepAIC()` erlaubt ...
+Ich habe mich hier für die Implementierung eines solchen Verfahrens in der Funktion `stepAIC()` des R Pakets MASS^[@venables_modern_2002, 175-177.] entschieden. `stepAIC()` benötigt ein berechnetes Eingangsmodell, das nach Möglichkeit nah am besten Ergebnismodell liegen sollte, sowie Modelldefinitionen jeweils eines maximal und minimal komplexen Ergebnismodells. Da das Ausgangsmodell mit `r nrow(sel2)` Beobachtungen und `r ncol(sel2)` Variablen in diesem Kontext als äußerst komplex gelten darf, möchte ich mich zunächst an folgende Empfehlung der Autoren halten, und dem Algorithmus stattdessen nur dieses Initialmodell zur Verfügung stellen.
 
-Der folgende Codeabschnitt dokumentiert mein Vorgehen:  
+> If a large model is selected as the starting point, the scope and scale arguments have generally reasonable defaults, but for a sma1l model where the process is probably to be one of adding terms, they will usually need both to be supplied. 
+>  
+> -- [@venables_modern_2002, 175.]
 
-```{r stewise multiple regression, echo = TRUE}
-# create initial linear model
-model <- lm(area ~ ., data = sel2)
- 
-# MASS::stepAIC()
+Zunächst erfolgt die Berechnung des Ausgangsmodells mittels der Funktion `lm()` aus dem R Basispaket stats:
+
+```{r create first model, echo = TRUE}
+initial_model <- lm(area ~ ., data = sel2)
+```
+
+```{r plot first model, warning=FALSE, fig.height=7, fig.cap="\\label{fig:initial_model_plot}Residuals vs Fitted: Streuung der Abweichungen von der Modellvohersage. Normal Q-Q: . Scale-Location: . Residuals vs Leverage: Einflussreiche Ausreißer. ^[Zur Beschreibung der diagnostischen Plots: http://data.library.virginia.edu/diagnostic-plots/ [16.8.2017]]"}
+opar <- par(mfrow=c(2,2)) 
+
+plot(initial_model)
+
+par(opar) 
+```
+
+Abbildung \ref{fig:initial_model_plot} zeigt für dieses Modell die vier diagnostischen Standardplots, die die Funktion `plot.lm()` aus stats bereitstellt. 
+
+```{r stewise multiple regression}
+#MASS::stepAIC(model)
 ```
 
 
