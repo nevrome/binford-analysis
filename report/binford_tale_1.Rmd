@@ -251,7 +251,7 @@ Zunächst erfolgt die Berechnung des Ausgangsmodells mittels der Funktion `lm()`
 initial_model <- lm(area ~ ., data = sel2)
 ```
 
-```{r plot first model, warning=FALSE, fig.height=7, fig.cap="\\label{fig:initial_model_plot}Residuals vs Fitted: Streuung der Abweichungen von der Modellvohersage. Normal Q-Q: . Scale-Location: . Residuals vs Leverage: Einflussreiche Ausreißer. ^[Zur Beschreibung der diagnostischen Plots: http://data.library.virginia.edu/diagnostic-plots/ [16.8.2017]]"}
+```{r plot first model, warning=FALSE, fig.height=7, fig.cap="\\label{fig:initial_model_plot} \\newline  \\textbf{Residuals vs Fitted:} Streuung der Residuen in Abhängigkeit von der Modellvorhersage. Kann als Indikator für nicht lineare Trends dienen. \\newline \\textbf{Normal Q-Q:} Sortierte Residuenwerte abgetragen auf die theoretischen Quantile einer Normalverteilung. Zeigt, inwiefern die Residuenverteilung der Normalverteilung entspricht. \\newline \\textbf{Scale-Location:} Vergleiche Residuals vs Fitted. Die Umskalierung erlaubt es, die Homogenität der Residuenvarianz (Homoskedastizität) besser zu beurteilen.  \\newline \\textbf{Residuals vs Leverage:} Standardisierte Residuenwerte abgetragen auf ein Maß zur Einschätzung des Einflusses auf das Modellergebnis. Dient zum Identifizieren von einflussreichen Ausreißern. ^[Zum Verständnis der diagnostischen Plots: http://data.library.virginia.edu/diagnostic-plots/ [16.8.2017]]"}
 opar <- par(mfrow=c(2,2)) 
 
 plot(initial_model)
