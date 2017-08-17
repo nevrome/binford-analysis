@@ -237,21 +237,56 @@ Immerhin `r without_na` der `r ncol(sel1)` ($\approx$ `r without_na_percent`%) V
 
 ## Multiple Regression
 
-Multiple Lineare Regression ist ein Verfahren der Multivariaten Statistik, das die Erklärung und Vorhersage einer abhängigen Variable durch mehrere unabhängige Variablen erlaubt^[@backhaus_multivariate_2008, 52-53/64-65.]. Die Berechnung der Regressionsparameter funktioniert wie bei der Einfachen Regressionsanalyse durch Reduktion der Fehlerquadrate. Das Modellergebnis ist einerseits natürlich abhängig von den Eingabevariablen, andererseits aber auch -- zumindest wenn sie nicht vollständig unkorreliert sind -- von deren Eingabereihenfolge. Da im Fall der vorliegenden Analyse keine theoretischen oder sachlogischen Überlegungen Eingang finden sollen, die die Variablenauswahl determinieren würden, müssten eigentlich alle Permutationen von Auswahl und Reihenfolge betrachtet werden. Bei `r ncol(sel2) - 1` unabhängigen Variablen ist allerdings die Anzahl allein der Permutationen weit größer als praktisch in irgend einer Form verarbeitbar ($200! \approx 7.887*10^{374}$). Aus diesem Grund muss auf ein Verfahren der Schrittweisen Regressionsanalyse zurückgegriffen werden, das mittels Prüfgrößen selbständig und in verhältnismäßig wenigen Iterationsschritten eine Variablenauswahl trifft^[@backhaus_multivariate_2008, 100-105.].  
+Multiple Lineare Regression ist ein Verfahren der Multivariaten Statistik, das die Erklärung und Vorhersage einer abhängigen Variable durch mehrere unabhängige Variablen erlaubt^[@backhaus_multivariate_2008, 52-53/64-65.]. Die Berechnung der Regressionsparameter funktioniert wie bei der Einfachen Regressionsanalyse durch Reduktion der Fehlerquadrate. In einem ersten Schritt möchte ich das Modell von Binford nachstellen, indem ich seine Auswahl an Eingabevariablen übernehme und die Regression mittels der Funktion `lm()` aus dem R Basispaket stats darauf anwende. 
 
-Ich habe mich hier für die Implementierung eines solchen Verfahrens in der Funktion `stepAIC()` des R Pakets MASS^[@venables_modern_2002, 175-177.] entschieden. `stepAIC()` benötigt ein berechnetes Eingangsmodell, das nach Möglichkeit nah am besten Ergebnismodell liegen sollte, sowie Modelldefinitionen jeweils eines maximal und minimal komplexen Ergebnismodells. Da das Ausgangsmodell mit `r nrow(sel2)` Beobachtungen und `r ncol(sel2)` Variablen in diesem Kontext als äußerst komplex gelten darf, möchte ich mich zunächst an folgende Empfehlung der Autoren halten, und dem Algorithmus stattdessen nur dieses Initialmodell zur Verfügung stellen.
+```{r recreate binford model, echo=TRUE}
+binford_model <- lm(
+  area ~ hunting + lbio5 + lcoklm + 
+         lrunoff + watrgrc + medstab + perwltg +
+         rlow + rungrc + sdtemp, 
+  data = main
+)
+```
+
+```{r}
+binford_model %>%
+  broom::tidy() %>%
+  dplyr::mutate_if(
+    is.numeric,
+    dplyr::funs(round(., 2))
+  ) %>%
+  knitr::kable(
+    format = "latex",
+    caption = "\\label{tab:binford_model_result}Modellergebnis. \\newline \\textbf{term:} \\newline \\textbf{estimate:} \\newline \\textbf{std.error:} \\newline \\textbf{statistic:} \\newline \\textbf{p.value}",
+    booktabs = T
+  ) %>%
+  kableExtra::column_spec(1, bold = TRUE)
+```
+
+```{r plot binford model, warning=FALSE, fig.height=7, fig.cap="\\label{fig:binford_model_plot}Diagnostische Plots für das Modell auf Grundlage der von Binford vorgeschlagenen Variablenauswahl. \\newline  \\textbf{Residuals vs Fitted:} Streuung der Residuen in Abhängigkeit von der Modellvorhersage. Kann als Indikator für nicht lineare Trends dienen. \\newline \\textbf{Normal Q-Q:} Sortierte Residuenwerte abgetragen auf die theoretischen Quantile einer Normalverteilung. Zeigt, inwiefern die Residuenverteilung der Normalverteilung entspricht. \\newline \\textbf{Scale-Location:} Vergleiche Residuals vs Fitted. Die Umskalierung erlaubt es, die Homogenität der Residuenvarianz (Homoskedastizität) besser zu beurteilen.  \\newline \\textbf{Residuals vs Leverage:} Standardisierte Residuenwerte abgetragen auf ein Maß zur Einschätzung des Einflusses auf das Modellergebnis. Dient zum Identifizieren von einflussreichen Ausreißern. ^[Zum Verständnis der diagnostischen Plots: http://data.library.virginia.edu/diagnostic-plots/ [16.8.2017]]"}
+opar <- par(mfrow=c(2,2)) 
+plot(binford_model)
+par(opar) 
+```
+
+Tabelle \ref{tab:binford_model_result} enthält Koeffizienten und Fehlermargen des erzeugten Modells. Die Koeffizienten weichen aus mir unbekanntem Grund von den von Binford errechneten ab. Abbildung \ref{fig:binford_model_plot} zeigt die vier diagnostischen Standardplots, die die Funktion `plot.lm()` aus stats bereitstellt. Das Modell scheint eine hohe Erklärungspotenz zu besitzen.
+<!-- TODO: Mehr dazu! -->
+
+Das Ergebnis der Multiplen Regression ist einerseits natürlich abhängig von den Eingabevariablen, andererseits aber auch -- zumindest wenn sie nicht vollständig unkorreliert sind -- von deren Eingabereihenfolge. Da im Fall der vorliegenden Analyse keine theoretischen oder sachlogischen Überlegungen Eingang finden sollen, die die Variablenauswahl determinieren würden, müssten eigentlich alle Permutationen von Auswahl und Reihenfolge betrachtet werden. Bei `r ncol(sel2) - 1` unabhängigen Variablen ist allerdings die Anzahl allein der Permutationen weit größer als praktisch in irgend einer Form verarbeitbar ($200! \approx 7.887*10^{374}$). Aus diesem Grund muss auf ein Verfahren der Schrittweisen Regressionsanalyse zurückgegriffen werden, das mittels Prüfgrößen selbständig und in verhältnismäßig wenigen Iterationsschritten eine Variablenauswahl trifft^[@backhaus_multivariate_2008, 100-105.].  
+
+Ich habe mich hier für die Implementierung eines solchen Verfahrens in der Funktion `stepAIC()` des R Pakets MASS^[@venables_modern_2002, 172-177.] entschieden. `stepAIC()` führt die Modellreduktion durch schrittweise Minimierung der Prüfgröße AIC ($\mathit{AIC} = -2 * \mathit{maximierte} \mathit{Log-Likelihood} + 2 * \# Parameter$). Sie benötigt dafür ein berechnetes Eingangsmodell, das nach Möglichkeit nah am besten Ergebnismodell liegen sollte, sowie Modelldefinitionen jeweils eines maximal und minimal komplexen Ergebnismodells. Da das Ausgangsmodell mit `r nrow(sel2)` Beobachtungen und `r ncol(sel2)` Variablen in diesem Kontext als äußerst komplex gelten darf, möchte ich mich zunächst an folgende Empfehlung der Autoren halten, und dem Algorithmus stattdessen nur dieses Initialmodell zur Verfügung stellen.
 
 > If a large model is selected as the starting point, the scope and scale arguments have generally reasonable defaults, but for a sma1l model where the process is probably to be one of adding terms, they will usually need both to be supplied. 
 >  
 > -- [@venables_modern_2002, 175.]
 
-Zunächst erfolgt die Berechnung des Ausgangsmodells mittels der Funktion `lm()` aus dem R Basispaket stats:
+Zunächst erfolgt die Berechnung des Ausgangsmodells:
 
 ```{r create initial model, echo = TRUE, cache=TRUE}
 initial_model <- lm(area ~ ., data = sel2)
 ```
 
-```{r plot initial model, warning=FALSE, fig.height=7, fig.cap="\\label{fig:initial_model_plot}Diagnostische Plots für das Ausgangsmodell. \\newline  \\textbf{Residuals vs Fitted:} Streuung der Residuen in Abhängigkeit von der Modellvorhersage. Kann als Indikator für nicht lineare Trends dienen. \\newline \\textbf{Normal Q-Q:} Sortierte Residuenwerte abgetragen auf die theoretischen Quantile einer Normalverteilung. Zeigt, inwiefern die Residuenverteilung der Normalverteilung entspricht. \\newline \\textbf{Scale-Location:} Vergleiche Residuals vs Fitted. Die Umskalierung erlaubt es, die Homogenität der Residuenvarianz (Homoskedastizität) besser zu beurteilen.  \\newline \\textbf{Residuals vs Leverage:} Standardisierte Residuenwerte abgetragen auf ein Maß zur Einschätzung des Einflusses auf das Modellergebnis. Dient zum Identifizieren von einflussreichen Ausreißern. ^[Zum Verständnis der diagnostischen Plots: http://data.library.virginia.edu/diagnostic-plots/ [16.8.2017]]"}
+```{r plot initial model, warning=FALSE, fig.height=7, fig.cap="\\label{fig:initial_model_plot}Diagnostische Plots für das Ausgangsmodell mit allen Variablen."}
 opar <- par(mfrow=c(2,2)) 
 plot(initial_model)
 par(opar) 
@@ -261,10 +296,11 @@ par(opar)
 # visual obersvations at the plots allow identification of outliers:
 outies <- c(298, 306, 308)
 outies_names <- main$X[outies]
-
 ```
 
-Abbildung \ref{fig:initial_model_plot} zeigt für dieses Modell die vier diagnostischen Standardplots, die die Funktion `plot.lm()` aus stats bereitstellt. Für geringe Arealgrößen geben die Residuen Anlass zur Annahme, dass zwischen abhängiger und unabhägigen Variablen eine nicht-lineare Beziehung besteht, die durch das Modell schlecht abgebildet wird. Einige Beobachtungen (`r paste0(paste0(outies, ": ", outies_names), collapse = ", ")`) treten als klare Ausreißer auf, die ich zunächst allerdings ignorieren möchte. Stattdessen ein erster Durchlauf der automatischen, schrittweisen Modellreduktion: 
+Für geringe Arealgrößen geben die Residuen Anlass zur Annahme, dass zwischen abhängiger und unabhägigen Variablen eine nicht-lineare Beziehung besteht, die durch das Modell schlecht abgebildet wird (siehe Abbildung \ref{fig:initial_model_plot}). Einige Beobachtungen (`r paste0(paste0(outies, ": ", outies_names), collapse = ", ")`) treten als klare Ausreißer auf, die ich zunächst allerdings ignorieren möchte. 
+
+Stattdessen ein erster Durchlauf der automatischen, schrittweisen Modellreduktion: 
 
 ```{r stewise multiple regression, dependson="create first model", cache=TRUE, message=FALSE, echo=TRUE}
 model1 <- MASS::stepAIC(initial_model, trace = FALSE)
@@ -276,12 +312,42 @@ plot(model1)
 par(opar) 
 ```
 
-Folgende Variablen wurden in dieser Reihenfolge entfernt:
+Tabelle \ref{tab:model1_anova} zeigt die Reduktionsschritte.  
 
 ```{r}
-model1$anova %>% as.data.frame() %>%   knitr::kable(
+model1$anova %>% as.data.frame() %>% dplyr::rename("Dev" = "Deviance") %>% knitr::kable(
     format = "latex",
-    caption = "\\label{tab:huup}Kurzbeschreibung der Variablen in Binfords Ergebnismodell.",
+    caption = "\\label{tab:model1_anova}ANOVA Komponente des Ergebnismodelldatentyps von `stepAIC()`.  Zeigt die schrittweise Entfernung von Variablen zur Reduktion der Modellkomplexität und zugehörige, diagnostische Prüfgrößen. \\newline \\textbf{Step:} Variable, die in diesem Schritt entfernt oder hinzugefügt wurde \\newline \\textbf{Df:} Anzahl der Freiheitsgrade \\newline \\textbf{Dev:} Unterschied in der Summe der Fehlerquadrate gegenüber dem vorangegangenen Schritt \\newline \\textbf{Resid. Df:} Gesamtanzahl der Freiheitsgrade - Freiheitsgrade des Modells \\newline \\textbf{Resid. Dev:}  \\newline \\textbf{AIC:} AIC-Wert (siehe Text)",
     booktabs = T
+  ) %>%
+  kableExtra::column_spec(1, bold = TRUE, width = "6em") %>%
+  kableExtra::column_spec(2, width = "3em") %>%
+  kableExtra::column_spec(3, width = "2em") %>%
+  kableExtra::column_spec(4, width = "3em") %>%
+  kableExtra::column_spec(5, width = "3em") %>%
+  kableExtra::column_spec(6, width = "3em")
+```
+
+```{r}
+MASS::dropterm(model1, test = "F") -> ha
+
+gu <- ha %>% tibble::as.tibble() %>%
+  dplyr::mutate(
+    names = rownames(ha)
+  ) %>%
+  dplyr::filter(
+    `Pr(F)` < 0.00001
+  ) %$%
+  names
+
+shu <- main %>%
+  dplyr::select(
+    area, gu
   )
+
+model3 <- lm(area ~ ., data = shu)
+```
+
+```{r}
+#MASS::stepAIC(model1, trace = T, k = 10)
 ```
