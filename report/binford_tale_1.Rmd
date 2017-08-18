@@ -43,8 +43,8 @@ Das Beispiel konzentiert sich auf die Variable AREA -- die Größe des Areals, d
                 & (-0.110286 * \mathit{LRUNOFF}) + \\
                 & (0.175157 * \mathit{WATRGRC}) + \\
                 & (-0.743144 * \mathit{PERWLTG}) + \\
-                & (0.004706) * \mathit{RLOW} + \\
-                & (-0.080339) * \mathit{RUNGRC} + \\
+                & (0.004706 * \mathit{RLOW}) + \\
+                & (-0.080339 * \mathit{RUNGRC}) + \\
                 & (0.024755 * \mathit{SDTEMP})]
 \end{aligned}
 \end{equation}
@@ -272,9 +272,14 @@ par(opar)
 Tabelle \ref{tab:binford_model_result} enthält Koeffizienten und Fehlermargen des erzeugten Modells. Die Koeffizienten weichen aus mir unbekanntem Grund von den von Binford errechneten ab. Abbildung \ref{fig:binford_model_plot} zeigt die vier diagnostischen Standardplots, die die Funktion `plot.lm()` aus stats bereitstellt. Das Modell scheint eine hohe Erklärungspotenz zu besitzen.
 <!-- TODO: Mehr dazu! -->
 
-Das Ergebnis der Multiplen Regression ist einerseits natürlich abhängig von den Eingabevariablen, andererseits aber auch -- zumindest wenn sie nicht vollständig unkorreliert sind -- von deren Eingabereihenfolge. Da im Fall der vorliegenden Analyse keine theoretischen oder sachlogischen Überlegungen Eingang finden sollen, die die Variablenauswahl determinieren würden, müssten eigentlich alle Permutationen von Auswahl und Reihenfolge betrachtet werden. Bei `r ncol(sel2) - 1` unabhängigen Variablen ist allerdings die Anzahl allein der Permutationen weit größer als praktisch in irgend einer Form verarbeitbar ($200! \approx 7.887*10^{374}$). Aus diesem Grund muss auf ein Verfahren der Schrittweisen Regressionsanalyse zurückgegriffen werden, das mittels Prüfgrößen selbständig und in verhältnismäßig wenigen Iterationsschritten eine Variablenauswahl trifft^[@backhaus_multivariate_2008, 100-105.].  
+```{r}
+binford_model2 <- binford_model
+binford_model$coefficients <- c()
+```
 
-Ich habe mich hier für die Implementierung eines solchen Verfahrens in der Funktion `stepAIC()` des R Pakets MASS^[@venables_modern_2002, 172-177.] entschieden. `stepAIC()` führt die Modellreduktion durch schrittweise Minimierung der Prüfgröße AIC ($\mathit{AIC} = -2 * \mathit{maximierte} \mathit{Log-Likelihood} + 2 * \# Parameter$). Sie benötigt dafür ein berechnetes Eingangsmodell, das nach Möglichkeit nah am besten Ergebnismodell liegen sollte, sowie Modelldefinitionen jeweils eines maximal und minimal komplexen Ergebnismodells. Da das Ausgangsmodell mit `r nrow(sel2)` Beobachtungen und `r ncol(sel2)` Variablen in diesem Kontext als äußerst komplex gelten darf, möchte ich mich zunächst an folgende Empfehlung der Autoren halten, und dem Algorithmus stattdessen nur dieses Initialmodell zur Verfügung stellen.
+Ich möchte nun versuchen, selbst ein Modell für die Variable AREA zu erstellen. Das Ergebnis der Multiplen Regression ist dabei einerseits abhängig von den Eingabevariablen, andererseits aber auch -- zumindest wenn sie nicht vollständig unkorreliert sind -- von deren Eingabereihenfolge. Da im Fall der vorliegenden Analyse keine theoretischen oder sachlogischen Überlegungen Eingang finden sollen, die die Variablenauswahl determinieren würden, müssten eigentlich alle Permutationen von Auswahl und Reihenfolge betrachtet werden. Bei `r ncol(sel2) - 1` unabhängigen Variablen ist allerdings die Anzahl allein der Permutationen weit größer als praktisch in irgendeiner Form verarbeitbar ($200! \approx 7.887*10^{374}$). Aus diesem Grund muss auf ein Verfahren der Schrittweisen Regressionsanalyse zurückgegriffen werden, das mittels Prüfgrößen selbständig und in verhältnismäßig wenigen Iterationsschritten eine Variablenauswahl trifft^[@backhaus_multivariate_2008, 100-105.].  
+
+Ich habe mich hier für die Implementierung eines solchen Verfahrens in der Funktion `stepAIC()` des R Pakets MASS^[@venables_modern_2002, 172-177.] entschieden. `stepAIC()` erreicht die Modellreduktion durch schrittweise Minimierung der Prüfgröße AIC ($\mathit{AIC} = -2 * \mathit{maximierte} \mathit{Log-Likelihood} + 2 * \# Parameter$). Sie benötigt dafür ein berechnetes Eingangsmodell, das nach Möglichkeit nah am besten Ergebnismodell liegen sollte, sowie Modelldefinitionen jeweils eines maximal und minimal komplexen Ergebnismodells. Da das Ausgangsmodell mit `r nrow(sel2)` Beobachtungen und `r ncol(sel2)` Variablen in diesem Kontext als komplex gelten darf, möchte ich mich zunächst an folgende Empfehlung der Autoren halten, und dem Algorithmus stattdessen nur dieses Initialmodell zur Verfügung stellen.
 
 > If a large model is selected as the starting point, the scope and scale arguments have generally reasonable defaults, but for a sma1l model where the process is probably to be one of adding terms, they will usually need both to be supplied. 
 >  
@@ -312,9 +317,7 @@ plot(model1)
 par(opar) 
 ```
 
-Tabelle \ref{tab:model1_anova} zeigt die Reduktionsschritte.  
-
-```{r}
+```{r anova table of stepAIC}
 model1$anova %>% as.data.frame() %>% dplyr::rename("Dev" = "Deviance") %>% knitr::kable(
     format = "latex",
     caption = "\\label{tab:model1_anova}ANOVA Komponente des Ergebnismodelldatentyps von `stepAIC()`.  Zeigt die schrittweise Entfernung von Variablen zur Reduktion der Modellkomplexität und zugehörige, diagnostische Prüfgrößen. \\newline \\textbf{Step:} Variable, die in diesem Schritt entfernt oder hinzugefügt wurde \\newline \\textbf{Df:} Anzahl der Freiheitsgrade \\newline \\textbf{Dev:} Unterschied in der Summe der Fehlerquadrate gegenüber dem vorangegangenen Schritt \\newline \\textbf{Resid. Df:} Gesamtanzahl der Freiheitsgrade - Freiheitsgrade des Modells \\newline \\textbf{Resid. Dev:}  \\newline \\textbf{AIC:} AIC-Wert (siehe Text)",
@@ -328,6 +331,50 @@ model1$anova %>% as.data.frame() %>% dplyr::rename("Dev" = "Deviance") %>% knitr
   kableExtra::column_spec(6, width = "3em")
 ```
 
+Tabelle \ref{tab:model1_anova} zeigt die Reduktionsschritte. `r nrow(model1$anova)` Variablen wurden von `stepAIC()` entfernt, dann allerdingskam der Prozess in diesem Durchlauf zum halten. Der Vergleich des *Residuals vs Leverage* Plots in Abbildung \ref{fig:initial_model_plot} und Abbildung \ref{fig:model1_plot} legt nahe, dass sich die durchschnittliche Wirkung individueller Beobachtungen auf das Gesamtergebnis verringert hat. Anzunehmen ist, dass Variablen mit großer Variablität entfernt wurden. Der Vergleich mit Abbildung \ref{fig:binford_model_plot} legt nahe, dass sich dieser Trend bei weiterer Reduktion des Modells fortsetzen wird.
+
+Die Reduktion auf `r ncol(sel2) - nrow(model1$anova)` Variablen ist noch nicht ausreichend, um an die deskriptive Einfachheit des Binford-Modells heranzureichen. Die Minimierung des AIC-Werts ist offensichtlich kein ausreichend starkes Optimierungskriterium:
+
+> This suggests, correctly, that selecting terms on the basis of AIC can be somewhat permissive in its choice of terms, being roughly equivalent to choosing an F-cutoff of 2.  
+>  
+> -- [@venables_modern_2002, 176.]
+
+Wir können nun fortfahren, indem wir entweder das k-Attribut in `stepAIC()` (*the multiple of the number of degrees of freedom used for the penalty*) erhöhen und den Prozess erneut starten, oder mittels F-Statistik schrittweise jene Variablen entfernen, die keinen signifikanten Einfluss auf das Ergebnismodell nehmen. Um diese zu identifizieren, steht in MASS die Funktion `dropterm()` bereit.       
+
+<!-- https://www.r-bloggers.com/manual-variable-selection-using-the-dropterm-function/ --> 
+
+```{r dropterm example code, eval=FALSE, echo=TRUE}
+MASS::dropterm(model1, test = "F")
+```
+
+```{r dropterm example table, cache=TRUE}
+MASS::dropterm(model1, test = "F") %>%
+  as.data.frame() %>%
+  magrittr::extract(1:10, ) %>%
+  tibble::rownames_to_column() %>%
+  dplyr::mutate_if(
+    is.numeric,
+    dplyr::funs(round(., 2))
+  ) %>%
+  dplyr::mutate_all(
+    dplyr::funs(as.character(.))
+  ) %>%
+  # add decorative ... at the beginning and end
+  rbind(
+    ., 
+    data.frame(
+      rowname = "...", Df = "...", `Sum of Sq` = "...", RSS = "...",
+      AIC = "...", `F Value` = "...", `Pr(F)` = "...", check.names = F
+    )
+  ) %>%
+  knitr::kable(
+    format = "latex",
+    caption = "\\label{tab:dropterm_example}dropterm \\newline \\textbf{term:} \\newline \\textbf{estimate:} \\newline \\textbf{std.error:} \\newline \\textbf{statistic:} \\newline \\textbf{p.value}",
+    booktabs = T
+  ) %>%
+  kableExtra::column_spec(1, bold = TRUE)
+```
+
 ```{r}
 MASS::dropterm(model1, test = "F") -> ha
 
@@ -335,6 +382,9 @@ gu <- ha %>% tibble::as.tibble() %>%
   dplyr::mutate(
     names = rownames(ha)
   ) %>%
+  # dplyr::top_n(
+  #   -10, `Pr(F)`
+  # ) %$%
   dplyr::filter(
     `Pr(F)` < 0.00001
   ) %$%
@@ -346,8 +396,11 @@ shu <- main %>%
   )
 
 model3 <- lm(area ~ ., data = shu)
+
+
+
 ```
 
 ```{r}
-#MASS::stepAIC(model1, trace = T, k = 10)
+#MASS::stepAIC(model3)
 ```
