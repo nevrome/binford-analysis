@@ -346,7 +346,7 @@ Wir können nun fortfahren, indem wir entweder das k-Attribut in `stepAIC()` (*t
 MASS::dropterm(model1, test = "F")
 ```
 
-Tabelle \ref{tab:dropterm_example}
+Tabelle \ref{tab:dropterm_example} gibt Einblick... <!-- TODO -->
 
 ```{r dropterm example table, cache=TRUE}
 MASS::dropterm(model1, test = "F") %>%
@@ -383,20 +383,34 @@ MASS::dropterm(model1, test = "F") %>%
   kableExtra::column_spec(1, bold = TRUE)
 ```
 
-```{r}
-MASS::dropterm(model1, test = "F") -> ha
+Ich möchte das Vorgehen, mit `dropterm()` schrittweise Variablen zu entfernen automatisieren und dann so oft wiederholt zur Anwendung bringen, bis... <!-- TODO -->
 
-gu <- ha %>% tibble::as.tibble() %>%
-  dplyr::mutate(
-    names = rownames(ha)
-  ) %>%
-  # dplyr::top_n(
-  #   -10, `Pr(F)`
-  # ) %$%
-  dplyr::filter(
-    `Pr(F)` < 0.00001
-  ) %$%
-  names
+```{r, echo=TRUE}
+model2 <- model1
+
+for (i in 1:164) {
+  victimvar <- MASS::dropterm(model2, test = "F") %>% 
+    tibble::as.tibble() %>%
+    tibble::rownames_to_column() %>%
+    # dplyr::top_n(
+    #   -10, `Pr(F)`
+    # ) %$%
+    # dplyr::filter(
+    #   `Pr(F)` < 0.00001
+    # ) %$%
+    dplyr::top_n(
+     1, `Pr(F)`
+    ) %$%
+    rowname
+  
+  model2 <- update(model2, as.formula(paste(". ~ . - ", victimvar))) 
+  
+  print(i)
+}
+
+model2
+
+plot(model2)
 
 shu <- main %>%
   dplyr::select(
