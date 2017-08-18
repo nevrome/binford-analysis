@@ -12,10 +12,6 @@ mainfont: "Arial"
 csl: deutsches-archaologisches-institut.csl
 ---
 
-```{r global chunk options, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE)
-```
-
 ```{r load libraries, echo=FALSE}
 library(magrittr)
 library(ggplot2)

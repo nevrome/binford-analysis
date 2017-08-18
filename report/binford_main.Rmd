@@ -16,6 +16,9 @@ output:
     toc_depth: 4
     fig_caption: yes
     latex_engine: xelatex
+    includes:  
+      in_header: preamble-latex.tex
+    #keep_tex: yes
 geometry: margin=1.5cm
 bibliography: bibliography.bib
 mainfont: "Arial"
@@ -30,6 +33,10 @@ csl: deutsches-archaologisches-institut.csl
 <!-- controle space in between paragraphs, figures and tables -->
 \parskip 4pt
 \setlength{\textfloatsep}{10pt plus 1.0pt minus 2.0pt}
+
+```{r global chunk options, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
 
 ```{r child = 'binford_introduction.Rmd'}
 ```
