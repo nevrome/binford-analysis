@@ -32,31 +32,17 @@ Das Beispiel konzentiert sich auf die Variable AREA -- die Größe des Areals, d
 
 \begin{equation} \label{eq:area_multi}
 \begin{aligned}
-\mathit{AREA} = & 10 \mathbin{\char`\^} [3.421431 + \\ 
-                & (0.004732 * \mathit{HUNTING}) + \\
-                & (-0.387229 * \mathit{LBIO5}) + \\
-                & (0.186574 * \mathit{LCOKLM}) + \\
-                & (-0.110286 * \mathit{LRUNOFF}) + \\
-                & (0.175157 * \mathit{WATRGRC}) + \\
-                & (-0.743144 * \mathit{PERWLTG}) + \\
-                & (0.004706 * \mathit{RLOW}) + \\
-                & (-0.080339 * \mathit{RUNGRC}) + \\
-                & (0.024755 * \mathit{SDTEMP})]
-\end{aligned}
-\end{equation}
-
-\begin{equation} \label{eq:area_multi_log}
-\begin{aligned}
-\log _{10} \mathit{AREA} = LAREA = & 3.421431 + \\ 
-                & (0.004732 * \mathit{HUNTING}) + \\
-                & (-0.387229 * \mathit{LBIO5}) + \\
-                & (0.186574 * \mathit{LCOKLM}) + \\
-                & (-0.110286 * \mathit{LRUNOFF}) + \\
-                & (0.175157 * \mathit{WATRGRC}) + \\
-                & (-0.743144 * \mathit{PERWLTG}) + \\
-                & (0.004706 * \mathit{RLOW}) + \\
-                & (-0.080339 * \mathit{RUNGRC}) + \\
-                & (0.024755 * \mathit{SDTEMP})
+\mathit{AREA} = \\
+    & 10 \mathbin{\char`\^} [3.421431 + \\ 
+    & (0.004732 * \mathit{HUNTING}) + \\
+    & (-0.387229 * \mathit{LBIO5}) + \\
+    & (0.186574 * \mathit{LCOKLM}) + \\
+    & (-0.110286 * \mathit{LRUNOFF}) + \\
+    & (0.175157 * \mathit{WATRGRC}) + \\
+    & (-0.743144 * \mathit{PERWLTG}) + \\
+    & (0.004706 * \mathit{RLOW}) + \\
+    & (-0.080339 * \mathit{RUNGRC}) + \\
+    & (0.024755 * \mathit{SDTEMP})]
 \end{aligned}
 \end{equation}
 
@@ -248,6 +234,23 @@ sel2 <- sel1 %>%
 Immerhin `r without_na` der `r ncol(sel1)` ($\approx$ `r without_na_percent`%) Variablen besitzen allerdings überhaupt keine Lehrstellen. Der Datensatz ist bemerkenswert vollständig. Ich habe mich entschieden, alle `r nrow(na_vars_part)` Variablen, bei denen mehr als `r paste(MASS::fractions(na_vars_removal_threshold))` der Werte fehlen aus der Analyse auszuschließen, um Problemen bei der Regressionsanalyse vorzubeugen. In Abbildung \ref{fig:is_na_bar} ist die Demarkationslinie rot eingetragen. Bei den gruppenbezogenen Beobachtungen ist das Bild insgesamt ausgeglichener: Für alle Gruppen liegt eine große Menge an Werten vor. Hier sind keine Änderungen erforderlich.
 
 In einem letzten Schritt muss nun noch die Variable AREA durch die Variable LAREA ausgetauscht werden. Binford gibt im Buch zwar die Modellergebnisgleichung für AREA an, das errechnete Modell bezieht sich aber auf den Logarithmus zur Basis 10 von AREA (siehe Umformung von Gleichung \ref{eq:area_multi} zu \ref{eq:area_multi_log}). Der Ergebnisdatensatz wird im folgenden als `sel3` bezeichnet. 
+
+\begin{equation} \label{eq:area_multi_log}
+\begin{aligned}
+\log _{10} \mathit{AREA} = \\
+\mathit{LAREA} = \\
+    & 3.421431 + \\ 
+    & (0.004732 * \mathit{HUNTING}) + \\
+    & (-0.387229 * \mathit{LBIO5}) + \\
+    & (0.186574 * \mathit{LCOKLM}) + \\
+    & (-0.110286 * \mathit{LRUNOFF}) + \\
+    & (0.175157 * \mathit{WATRGRC}) + \\
+    & (-0.743144 * \mathit{PERWLTG}) + \\
+    & (0.004706 * \mathit{RLOW}) + \\
+    & (-0.080339 * \mathit{RUNGRC}) + \\
+    & (0.024755 * \mathit{SDTEMP})
+\end{aligned}
+\end{equation}
 
 ```{r}
 # replace   
