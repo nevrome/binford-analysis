@@ -69,7 +69,7 @@ tibble::tribble(
     booktabs = T
   ) %>%
   kableExtra::column_spec(1, bold = TRUE) %>%
-  kableExtra::column_spec(2, width = "13em")
+  kableExtra::column_spec(2, width = "16em")
 ```
 
 Binford hat seine Analyse in SPSS (Version 6.1.2) ausgeführt. Ein Skriptprotokoll der Analysesession liegt mir nicht vor. Um die Ergebnis in Form der Modellgleichung zu reproduzieren, werde ich nun also zunächst versuchen, das Vorgehen so gut wie möglich nachzuvollziehen. Dafür steht mir eine hoffentlich gleiche oder zumindest hochgradig ähnliche Version des oben beschriebene Gruppendatensatz zu Verfügung. Ich weiß weiterhin, dass Binford sein Modell mittels der Methode schrittweiser, Multipler Regression ermittelt hat. Unabhängige Variablen, die sich kollinear zu anderen unabhägigen Variablen verhalten, hat er entfernt. Die abschließende Entscheidung über das beste Modell hat er unter Beachtung von den Indikatorgrößen $R^2$ und Standardfehler getroffen. 
@@ -276,12 +276,12 @@ binford_model <- lm(
 )
 ```
 
-```{r, cache=TRUE, dependson="recreate binford model"}
+```{r binford model estimate table, cache=TRUE, dependson="recreate binford model"}
 binford_model %>%
   broom::tidy() %>%
   dplyr::mutate_if(
     is.numeric,
-    dplyr::funs(round(., 2))
+    dplyr::funs(round(., 3))
   ) %>%
   knitr::kable(
     format = "latex",
@@ -335,6 +335,7 @@ Stattdessen ein erster Durchlauf der automatischen, schrittweisen Modellreduktio
 ```{r stepwise multiple regression, cache=TRUE, dependson="create initial model", message=FALSE, echo=TRUE}
 model1 <- MASS::stepAIC(
   initial_model, 
+  # don't show intermediate steps
   trace = FALSE
 )
 ```
@@ -351,12 +352,8 @@ model1$anova %>% as.data.frame() %>% dplyr::rename("Dev" = "Deviance") %>% knitr
     caption = "\\label{tab:model1_anova}ANOVA Komponente des Ergebnismodelldatentyps von `stepAIC()`.  Zeigt die schrittweise Entfernung von Variablen zur Reduktion der Modellkomplexität und zugehörige, diagnostische Prüfgrößen. \\newline \\textbf{Step:} Variable, die in diesem Schritt entfernt oder hinzugefügt wurde \\newline \\textbf{Df -- degrees of freedom:} Anzahl der Freiheitsgrade ('Anzahl der Werte in der abschließenden Berechnung einer Statistik, die frei variieren können') \\newline \\textbf{Dev -- Deviance:} Unterschied in der Summe der Fehlerquadrate gegenüber dem vorangegangenen Schritt \\newline \\textbf{Resid. Df -- residual degrees of freedom:} Gesamtanzahl der Freiheitsgrade minus Freiheitsgrade des Modells \\newline \\textbf{Resid. Dev -- residual deviance:}  \\newline \\textbf{AIC -- Akaike information criterion:} siehe Text",
     booktabs = T
   ) %>%
-  kableExtra::column_spec(1, bold = TRUE, width = "6em") %>%
-  kableExtra::column_spec(2, width = "3em") %>%
-  kableExtra::column_spec(3, width = "2em") %>%
-  kableExtra::column_spec(4, width = "3em") %>%
-  kableExtra::column_spec(5, width = "3em") %>%
-  kableExtra::column_spec(6, width = "3em")
+  kableExtra::column_spec(1, bold = TRUE) %>%
+  kableExtra::kable_styling(font_size = 8)
 ```
 
 Tabelle \ref{tab:model1_anova} zeigt die Reduktionsschritte. `r nrow(model1$anova)` Variablen wurden von `stepAIC()` entfernt, dann allerdings kam der Prozess in diesem Durchlauf zum halten. Der Vergleich des *Residuals vs Leverage* Plots in Abbildung \ref{fig:initial_model_plot} und Abbildung \ref{fig:model1_plot} legt nahe, dass sich die durchschnittliche Wirkung individueller Beobachtungen auf das Gesamtergebnis verringert hat. Anzunehmen ist, dass Variablen mit großer Variablität entfernt wurden. Der Vergleich mit Abbildung \ref{fig:binford_model_plot} legt nahe, dass sich dieser Trend bei weiterer Reduktion des Modells fortsetzen wird.
@@ -414,35 +411,135 @@ MASS::dropterm(model1, test = "F") %>%
 
 Ich möchte das Vorgehen, mit `dropterm()` schrittweise Variablen zu entfernen automatisieren und dann so oft wiederholt zur Anwendung bringen, bis... <!-- TODO -->
 
-```{r, echo=TRUE, cache=TRUE, dependson="stepwise multiple regression"}
+```{r dropterm loop, echo=TRUE, cache=TRUE, dependson="stepwise multiple regression"}
+# dublicate model object 
 model2 <- model1
 
-for (i in 1:(ncol(sel3) - nrow(model1$anova) - 10)) {
-  victimvar <- MASS::dropterm(model2, test = "F") %>% 
+# determine number of vars to drop
+to_drop <- (ncol(sel3) - nrow(model1$anova) - 10)
+
+# drop loop
+for (i in 1:to_drop) {
+  # determine variable with highest 
+  # p-value of the F-Test
+  victimvar <- MASS::dropterm(
+      model2, test = "F"
+    ) %>% 
     tibble::as.tibble() %>%
     tibble::rownames_to_column() %>%
-    # dplyr::top_n(
-    #   -10, `Pr(F)`
-    # ) %$%
-    # dplyr::filter(
-    #   `Pr(F)` < 0.00001
-    # ) %$%
     dplyr::top_n(
      1, `Pr(F)`
     ) 
   
-  model2 <- update(model2, as.formula(paste(". ~ . - ", victimvar$rowname))) 
-  
-  # print(victimvar)
-  # print(summary(model2)$r.squared)
-  
+  # remove this variable from the model
+  model2 <- update(
+    model2, 
+    as.formula(paste(
+      ". ~ . - ", victimvar$rowname
+    ))
+  ) 
 }
 ```
 
-```{r plot model2, warning=FALSE, cache=TRUE, dependson="stepwise multiple regression", fig.height=7, fig.cap="\\label{fig:model2_plot}Diagnostische Plots für das Modell nach ...."}
+```{r plot model2, warning=FALSE, cache=TRUE, dependson="dropterm loop", fig.height=7, fig.cap="\\label{fig:model2_plot}Diagnostische Plots für das Modell nach ...."}
 opar <- par(mfrow=c(2,2)) 
 plot(model2)
 par(opar) 
+```
+
+```{r, cache=TRUE, dependson="dropterm loop"}
+model2 %>%
+  broom::tidy() %>%
+  dplyr::mutate_if(
+    is.numeric,
+    dplyr::funs(round(., 3))
+  ) %>%
+  knitr::kable(
+    format = "latex",
+    caption = "\\label{tab:model2_result}Modellergebnis. \\newline \\textbf{term:} \\newline \\textbf{estimate:} \\newline \\textbf{std.error:} \\newline \\textbf{statistic:} \\newline \\textbf{p.value}",
+    booktabs = T
+  ) %>%
+  kableExtra::column_spec(1, bold = TRUE)
+```
+
+Haha...
+
+```{r final model, cache=TRUE}
+# get variable descriptions
+# hu <- key %>%
+#   dplyr::filter(
+#     variable %in% colnames(sel3)
+#   ) %>%
+#   dplyr::select(
+#     variable, description
+#   )
+
+# manually identify variables, that are directly linked to AREA
+bad_vars <- c("density", "packinx", "prindx", "lden", "lpackinx")
+
+# remove those variables
+sel5 <- sel3 %>%
+  dplyr::select(
+    -dplyr::one_of(bad_vars)
+  )
+
+# create initial model with new variable selection
+initial_model2 <- lm(larea ~ ., data = sel5)
+
+# reduce model with stepAIC()
+model3 <- MASS::stepAIC(
+  initial_model2, 
+  trace = FALSE
+)
+
+# dublicate model object 
+model4 <- model3
+
+# determine number of vars to drop
+to_drop <- (ncol(sel5) - nrow(model3$anova) - 10)
+
+# drop loop
+for (i in 1:to_drop) {
+  # determine variable with highest 
+  # p-value of the F-Test
+  victimvar <- MASS::dropterm(
+      model4, test = "F"
+    ) %>% 
+    tibble::as.tibble() %>%
+    tibble::rownames_to_column() %>%
+    dplyr::top_n(
+     1, `Pr(F)`
+    ) 
+  
+  # remove this variable from the model
+  model4 <- update(
+    model4, 
+    as.formula(paste(
+      ". ~ . - ", victimvar$rowname
+    ))
+  ) 
+}
+```
+
+```{r plot model4, warning=FALSE, cache=TRUE, dependson="dropterm loop", fig.height=7, fig.cap="\\label{fig:model2_plot}Diagnostische Plots für das finale Modell ...."}
+opar <- par(mfrow=c(2,2)) 
+plot(model4)
+par(opar) 
+```
+
+```{r, cache=TRUE, dependson="dropterm loop"}
+model4 %>%
+  broom::tidy() %>%
+  dplyr::mutate_if(
+    is.numeric,
+    dplyr::funs(round(., 3))
+  ) %>%
+  knitr::kable(
+    format = "latex",
+    caption = "\\label{tab:model4_result}Modellergebnis. \\newline \\textbf{term:} \\newline \\textbf{estimate:} \\newline \\textbf{std.error:} \\newline \\textbf{statistic:} \\newline \\textbf{p.value}",
+    booktabs = T
+  ) %>%
+  kableExtra::column_spec(1, bold = TRUE)
 ```
 
 ## Vergleich der Ergebnismodelle
