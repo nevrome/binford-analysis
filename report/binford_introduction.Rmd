@@ -32,6 +32,8 @@ Die systematische Suche nach übergeordneten, wiederkehrenden Strukturen in der 
 >  
 > -- [@binford_constructing_2001, 392.]
 
+Hier wird ein Rahmen definiert ("groups that are dependent upon aquatic resources") und für den Fall eines Veränderungsprozesses ("as packing increases") eine Vorhersage ("should resort to more complex subsistence technology") getroffen, die dann noch weiter kontextualisiert und präzisiert wird.  
+ 
 Da sowohl die Daten als auch das Methodenset publiziert sind, die die Entwicklung dieser und aller anderen Aussagen zugrunde liegen, sollte es möglich sein, ...
 
 1. ... auf Grundlage der selben Daten unter Anwendung der selben Methode zu den gleichen Aussagen zu kommen.
@@ -40,9 +42,11 @@ Da sowohl die Daten als auch das Methodenset publiziert sind, die die Entwicklun
 
 Der vorliegenden Aufsatz dient dazu Binfords wissenschaftlichen Selbstanspruch zu prüfen, diese Grundlage wissenschaftlichen Arbeitens zu üben und -- im Kontext des Hauptseminars -- meine Methodenkompetenz auszubauen. Insbesondere Modelleinpassung mittels Regressionsanalyse^[@nakoinz_modelling_2016, 87-105.] soll vertieft zur Anwendung kommen.
 
-Vor diesem Hintergrund möchte ich weder versuchen, einen Abriss der archäologischen oder archäologietheoretischen Leitgedanken des Buches nachzuzeichnen, noch seine kontroverse Rezeption aufzugreifen. Kritiker haben Binford vorgeworfen ... ^[@doi:10.1086/jar.58.3.3631188, @browman_constructing_2005, @donald_pate_review_2005]. Diese durchaus berechtigten Bedenken, mit denen auch dieser Aufsatz konfrontiert werden kann, will ich hier beiseite lassen und mich stattdessen voll auf die explorative Datenanalyse konzentrieren. Eine Abenteuerreise auf den Spuren Binfords. 
+Vor diesem Hintergrund möchte ich weder versuchen, einen Abriss der archäologischen oder archäologietheoretischen Leitgedanken des Buches nachzuzeichnen^[Für einen kurzen Abriss siehe z.B. @donald_pate_review_2005, @browman_constructing_2005], noch seine kontroverse Rezeption aufzugreifen. Kritiker haben Binford u.a. die Verwendung widersprüchlicher und mangelhaft definierter Neologismen, Rechenfehler und Mängel in der Datenaufnahme bis hin zum Übersehen zentraler Trends vorgeworfen ^[@doi:10.1086/jar.58.3.3631188, @10.2307/4128427]. Die fachtheoretischen Grundlagen des Buches in Kulturökologie und Middle-Range-Theorie gehören in ein ohnehin umstrittenes Feld. Eine Auseinandersetzung mit dem Gesamtwerk ist im zeitlich stark begrenzten Rahmen einer Seminararbeit nicht sinnvoll möglich. Stattdessen möchte Ich das Opus höchst selektiv betrachten, berechtigte Kritik vorerst beiseite lassen und mich voll auf einen kleinen Aspekt der explorativen Datenanalyse konzentrieren. Eine erste Abenteuerreise auf den Spuren Binfords, wie sie noch häufig unternommen werden sollte.
 
-
+> Does it help us to better suppose hunter-gatherer variability, and to conceptualize variability beyond what we currently know? The answer to the first question is a definite yes, but its generalizations require rigorous testing and replication, the normal scientific process that Binford himself has advocated for four decades.
+>  
+> @10.2307/4128427, 372.
 
 
 
