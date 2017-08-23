@@ -72,11 +72,11 @@ tibble::tribble(
   kableExtra::column_spec(2, width = "16em")
 ```
 
-Binford hat seine Analyse in SPSS (Version 6.1.2) ausgeführt. Ein Skriptprotokoll der Analysesession liegt mir nicht vor. Um die Ergebnis in Form der Modellgleichung zu reproduzieren, werde ich nun also zunächst versuchen, das Vorgehen so gut wie möglich nachzuvollziehen. Dafür steht mir eine hoffentlich gleiche oder zumindest hochgradig ähnliche Version des oben beschriebene Gruppendatensatz zu Verfügung. Ich weiß weiterhin, dass Binford sein Modell mittels der Methode schrittweiser, Multipler Regression ermittelt hat. Unabhängige Variablen, die sich kollinear zu anderen unabhägigen Variablen verhalten, hat er entfernt. Die abschließende Entscheidung über das beste Modell hat er unter Beachtung von den Indikatorgrößen $R^2$ und Standardfehler getroffen. 
+Binford hat seine Analyse in SPSS (Version 6.1.2) ausgeführt. Ein Skriptprotokoll der Analysesession liegt mir nicht vor. Um die Ergebnis in Form der Modellgleichung zu reproduzieren, werde ich nun also zunächst versuchen, das Vorgehen so gut wie möglich nachzuvollziehen. Dafür steht mir eine hoffentlich gleiche oder zumindest hochgradig ähnliche Version des oben beschriebene Gruppendatensatz zu Verfügung. Ich weiß weiterhin, dass Binford sein Modell mittels der Methode schrittweiser, Multipler Regression ermittelt hat. Unabhängige Variablen, die sich kollinear zu anderen unabhägigen Variablen verhalten, hat er entfernt. Die abschließende Entscheidung über das beste Modell gibt er an unter Beachtung von den Indikatorgrößen $R^2$ und Standardfehler getroffen zu haben. 
 
 ## Datensatz
 
-Ein wesentliches Wissendefizit besteht bezüglich der Information, in welcher Reihenfolge und mit welcher Rechtfertigung in den Schritten der Multiplen Regression Variablen entfernt wurden. Schon die Angabe welche Variablen im Ausgangsdatensatz berücksichtigt wurden ist unscharf. Immerhin: Da Multiple Regression nur auf Variablen der Intervall- oder Verhältnisskala (zusammen auch Kardinalskala oder metrisch skalierte Variablen) anwendbar ist, lässt sich eine erste Eingrenzung vornehmen. Der Metadatensatz LRBkey verfügt hierzu über die Spalte *type*, die zu jeder Variable ein Skalenniveau angibt. Leider wird nur zwischen "categorical" und "ordinal" unterschieden. Dabei werden alle Variablen jenseits der Nominalskala als "ordinal" angesprochen. Das genügt nicht, um automatisiert alle intervall- und verhältnisskalieren Variablen auszuwählen. Aus diesem Grund habe ich selbst die Spalte *type_exp* im Metadatensatz hinzugefügt, und nach meiner Einschätzung auf Grundlage des Wertebereichs und der Beschreibung eine Zuordnung zu einem der vier Skalenniveaus "nominal", "ordinal", "interval" und "ratio" vorgenommen. Tabelle \ref{tab:variable_key_example} illustriert die Unterschiede zwischen der vorhandenen und meiner neu vorgenommenen Zuordnung für ein paar zufällig ausgewählte Variablen. Abbildung \ref{fig:level_of_meas_bar} zeigt, wie sich die Reevaluation durch die in *type_exp* deutlich akzentuiertere Verteilung der Skalenniveaus auswirkt. 
+Ein wesentliches Wissendefizit besteht bezüglich der Information, in welcher Reihenfolge und mit welcher Rechtfertigung in den Schritten der Multiplen Regression Variablen jeweils entfernt wurden. Schon die Angabe welche Variablen im Ausgangsdatensatz berücksichtigt wurden ist unscharf. Immerhin: Da Multiple Regression nur auf Variablen der Intervall- oder Verhältnisskala (zusammen auch Kardinalskala oder metrisch skalierte Variablen) anwendbar ist, lässt sich eine erste Eingrenzung vornehmen. Der Metadatensatz LRBkey verfügt hierzu über die Spalte *type*, die zu jeder Variable ein Skalenniveau angibt. Leider wird nur zwischen "categorical" und "ordinal" unterschieden. Dabei werden alle Variablen jenseits der Nominalskala als "ordinal" angesprochen. Das genügt nicht, um automatisiert alle intervall- und verhältnisskalieren Variablen auszuwählen. Aus diesem Grund habe ich selbst die Spalte *type_exp* im Metadatensatz hinzugefügt, und nach meiner Einschätzung auf Grundlage des Wertebereichs und der Beschreibung eine Zuordnung zu einem der vier Skalenniveaus "nominal", "ordinal", "interval" und "ratio" vorgenommen. Tabelle \ref{tab:variable_key_example} illustriert die Unterschiede zwischen der vorhandenen und meiner neu vorgenommenen Zuordnung für ein paar zufällig ausgewählte Variablen. Abbildung \ref{fig:level_of_meas_bar} zeigt, wie sich die Reevaluation durch die in *type_exp* deutlich akzentuiertere Verteilung der Skalenniveaus auswirkt. 
 
 ```{r load binford data, cache=TRUE, message=FALSE, warning=FALSE}
 # load data
@@ -277,21 +277,63 @@ binford_model <- lm(
 ```
 
 ```{r binford model estimate table, cache=TRUE, dependson="recreate binford model"}
-binford_model %>%
+var_vals <- binford_model %>%
   broom::tidy() %>%
   dplyr::mutate_if(
     is.numeric,
     dplyr::funs(round(., 3))
-  ) %>%
+  ) 
+
+var_vals %>%
   knitr::kable(
     format = "latex",
-    caption = "\\label{tab:binford_model_result}Modellergebnis. \\newline \\textbf{term:} \\newline \\textbf{estimate:} \\newline \\textbf{std.error:} \\newline \\textbf{statistic:} \\newline \\textbf{p.value}",
+    caption = "\\label{tab:binford_model_result}Ergebniszusammenfassung des mit Binfords Variablenauswahl reproduzierten Modells. Alle Werte sind auf drei Nachkommastellen gerundet \\newline \\textbf{term:} Koeffizienten (Intercept und Variablenslopes) \\newline \\textbf{estimate:} \\newline \\textbf{std.error:} \\newline \\textbf{statistic:} \\newline \\textbf{p.value} huhu. \\protect\\footnotemark{}",
     booktabs = T
   ) %>%
   kableExtra::column_spec(1, bold = TRUE)
 ```
 
-```{r plot binford model, warning=FALSE, cache=TRUE, dependson="recreate binford model", fig.height=7, fig.cap="\\label{fig:binford_model_plot}Diagnostische Plots für das Modell auf Grundlage der von Binford vorgeschlagenen Variablenauswahl. \\newline  \\textbf{Residuals vs Fitted:} Streuung der Residuen in Abhängigkeit von der Modellvorhersage. Kann als Indikator für nicht lineare Trends dienen. \\newline \\textbf{Normal Q-Q:} Sortierte Residuenwerte abgetragen auf die theoretischen Quantile einer Normalverteilung. Zeigt, inwiefern die Residuenverteilung der Normalverteilung entspricht. \\newline \\textbf{Scale-Location:} Vergleiche Residuals vs Fitted. Die Umskalierung erlaubt es, die Homogenität der Residuenvarianz (Homoskedastizität) besser zu beurteilen.  \\newline \\textbf{Residuals vs Leverage:} Standardisierte Residuenwerte abgetragen auf ein Maß zur Einschätzung des Einflusses auf das Modellergebnis. Dient zum Identifizieren von einflussreichen Ausreißern. ^[Zum Verständnis der diagnostischen Plots: http://data.library.virginia.edu/diagnostic-plots/ [16.8.2017]]"}
+\footnotetext{Zum Verständnis der einzelnen Prüfgrößen:
+  \url{https://feliperego.github.io/blog/2015/10/23/Interpreting-Model-Output-In-R}
+  {[}23.8.2017{]}}
+
+```{r binford model estimate table 2, cache=TRUE, dependson="recreate binford model"}
+mod_vals <- binford_model %>%
+  broom::glance() %>%
+  tidyr::gather(var, value) %>% 
+  dplyr::mutate(
+    var2 = c(var[7:11], rep(NA, 6)),
+    value2 = c(value[7:11], rep(NA, 6))
+  ) %>%
+  magrittr::extract(1:6,) %>%
+  dplyr::mutate_if(
+    is.numeric,
+    dplyr::funs(round(., 3))
+  ) %>% dplyr::mutate_if(
+    is.numeric,
+    as.character
+  ) %>%
+  dplyr::rename(
+    " " = "var",
+    " " = "var2",
+    "value" = "value2"
+  )
+
+mod_vals[is.na(mod_vals)] <- ""
+
+mod_vals %>%
+  knitr::kable(
+    format = "latex",
+    caption = "\\label{tab:binford_model_result_2}Ergebniszusammenfassung des mit Binfords Variablenauswahl reproduzierten Modells. Alle Werte sind auf drei Nachkommastellen gerundet \\newline \\textbf{term:} Koeffizienten (Intercept und Variablenslopes) \\newline \\textbf{estimate:} \\newline \\textbf{std.error:} \\newline \\textbf{statistic:} \\newline \\textbf{p.value} huhu. \\protect\\footnotemark{}",
+    booktabs = T
+  ) %>%
+  kableExtra::column_spec(1, bold = TRUE) %>%
+  kableExtra::column_spec(3, bold = TRUE)
+```
+
+\footnotetext{ebenda}
+
+```{r plot binford model, warning=FALSE, cache=TRUE, dependson="recreate binford model", fig.height=7, fig.cap="\\label{fig:binford_model_plot}Diagnostische Plots für das mit Binfords Variablenauswahl reproduzierte Modell. \\newline \\textbf{Residuals vs Fitted:} Streuung der Residuen in Abhängigkeit von der Modellvorhersage. Kann als Indikator für nicht lineare Trends dienen. \\newline \\textbf{Normal Q-Q:} Sortierte Residuenwerte abgetragen auf die theoretischen Quantile einer Normalverteilung. Zeigt, inwiefern die Residuenverteilung der Normalverteilung entspricht. \\newline \\textbf{Scale-Location:} Vergleiche Residuals vs Fitted. Die Umskalierung erlaubt es, die Homogenität der Residuenvarianz (Homoskedastizität) besser zu beurteilen.  \\newline \\textbf{Residuals vs Leverage:} Standardisierte Residuenwerte abgetragen auf ein Maß zur Einschätzung des Einflusses auf das Modellergebnis. Dient zum Identifizieren von einflussreichen Ausreißern. ^[Zum Verständnis der diagnostischen Plots: http://data.library.virginia.edu/diagnostic-plots [16.8.2017]]"}
 opar <- par(mfrow=c(2,2)) 
 plot(binford_model)
 par(opar) 
@@ -527,7 +569,7 @@ plot(model4)
 par(opar) 
 ```
 
-```{r, cache=TRUE, dependson="dropterm loop"}
+```{r final model estimate table, cache=TRUE, dependson="dropterm loop"}
 model4 %>%
   broom::tidy() %>%
   dplyr::mutate_if(
@@ -540,6 +582,40 @@ model4 %>%
     booktabs = T
   ) %>%
   kableExtra::column_spec(1, bold = TRUE)
+```
+
+```{r final model estimate table 2, cache=TRUE, dependson="dropterm loop"}
+fin_mod_vals <- model4 %>%
+  broom::glance() %>%
+  tidyr::gather(var, value) %>% 
+  dplyr::mutate(
+    var2 = c(var[7:11], rep(NA, 6)),
+    value2 = c(value[7:11], rep(NA, 6))
+  ) %>%
+  magrittr::extract(1:6,) %>%
+  dplyr::mutate_if(
+    is.numeric,
+    dplyr::funs(round(., 3))
+  ) %>% dplyr::mutate_if(
+    is.numeric,
+    as.character
+  ) %>%
+  dplyr::rename(
+    " " = "var",
+    " " = "var2",
+    "value" = "value2"
+  )
+
+fin_mod_vals[is.na(fin_mod_vals)] <- ""
+
+fin_mod_vals %>%
+  knitr::kable(
+    format = "latex",
+    caption = "\\label{tab:binford_model_result_2}Ergebniszusammenfassung des mit Binfords Variablenauswahl reproduzierten Modells. Alle Werte sind auf drei Nachkommastellen gerundet \\newline \\textbf{term:} Koeffizienten (Intercept und Variablenslopes) \\newline \\textbf{estimate:} \\newline \\textbf{std.error:} \\newline \\textbf{statistic:} \\newline \\textbf{p.value} huhu.",
+    booktabs = T
+  ) %>%
+  kableExtra::column_spec(1, bold = TRUE) %>%
+  kableExtra::column_spec(3, bold = TRUE)
 ```
 
 ## Vergleich der Ergebnismodelle
