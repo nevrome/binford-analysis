@@ -40,7 +40,7 @@ Da sowohl die Daten als auch das Methodenset publiziert sind, die die Entwicklun
 
 Der vorliegenden Aufsatz dient dazu Binfords wissenschaftlichen Selbstanspruch zu prüfen, diese Grundlage wissenschaftlichen Arbeitens zu üben und -- im Kontext des Hauptseminars -- meine Methodenkompetenz auszubauen. Insbesondere Modelleinpassung mittels Regressionsanalyse^[@nakoinz_modelling_2016, 87-105.] soll vertieft zur Anwendung kommen.
 
-Vor diesem Hintergrund möchte ich weder versuchen, einen Abriss der archäologischen oder archäologietheoretischen Leitgedanken des Buches nachzuzeichnen, noch seine kontroverse Rezeption aufzugreifen. Kritiker haben Binford vorgeworfen ... ^[Zitate]. Diese durchaus berechtigten Bedenken, mit denen auch dieser Aufsatz konfrontiert werden kann, will ich hier beiseite lassen und mich stattdessen voll auf die explorative Datenanalyse konzentrieren. Ein adventure tale auf den Spuren Binfords. 
+Vor diesem Hintergrund möchte ich weder versuchen, einen Abriss der archäologischen oder archäologietheoretischen Leitgedanken des Buches nachzuzeichnen, noch seine kontroverse Rezeption aufzugreifen. Kritiker haben Binford vorgeworfen ... ^[@doi:10.1086/jar.58.3.3631188, @browman_constructing_2005, @donald_pate_review_2005]. Diese durchaus berechtigten Bedenken, mit denen auch dieser Aufsatz konfrontiert werden kann, will ich hier beiseite lassen und mich stattdessen voll auf die explorative Datenanalyse konzentrieren. Eine Abenteuerreise auf den Spuren Binfords. 
 
 
 
