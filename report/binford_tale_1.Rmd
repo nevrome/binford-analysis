@@ -62,6 +62,10 @@ tibble::tribble(
   "RUNGRC", "Anzahl der Monate im Wachstumszeitraum in denen der RUNOFF-Wert > 0", "Anzahl",
   "SDTEMP", "Standardabweichung der mittleren Monatstemperatur", "keine Einheit"
 ) %>%
+    dplyr::rename(
+    " " = "colA",
+    "Beschreibung" = "colB"
+  ) %>%
   # table setup and settings
   knitr::kable(
     format = "latex",
@@ -267,7 +271,7 @@ sel3 <- sel2 %>%
 
 Multiple Lineare Regression ist ein Verfahren der Multivariaten Statistik, das die Erklärung und Vorhersage einer abhängigen Variable durch mehrere unabhängige Variablen erlaubt^[@backhaus_multivariate_2008, 52-53/64-65.]. Die Berechnung der Regressionsparameter funktioniert wie bei der Einfachen Regressionsanalyse durch Reduktion der Fehlerquadrate. In einem ersten Schritt möchte ich das Modell von Binford nachstellen, indem ich seine Auswahl an Eingabevariablen übernehme und die Regression mittels der Funktion `lm()` aus dem R Basispaket stats darauf anwende. 
 
-```{r recreate binford model, echo=TRUE}
+```{r recreate binford model, echo=TRUE, cache=TRUE}
 binford_model <- lm(
   larea ~ hunting + lbio5 + lcoklm + 
          lrunoff + watrgrc + medstab + perwltg +
@@ -290,7 +294,7 @@ var_vals <- binford_model %>%
 var_vals %>%
   knitr::kable(
     format = "latex",
-    caption = "\\label{tab:binford_model_result}Ergebniszusammenfassung des mit Binfords Variablenauswahl reproduzierten Modells. Alle Werte sind auf drei Nachkommastellen gerundet \\newline \\textbf{estimate -- Koeffizient:} Koeffizienten(schätzung) des Ergebnismodells (Intercept und Variablenslopes) \\newline \\textbf{std.error -- Standardfehler:} Durchschnittliche Abweichung des Koeffizienten vom tatsächlichen, durchschnittlichen Wert der abhängigen Variable. Der Wert sollte in Relation zum Koeffizienten klein sein.\\newline \\textbf{statistic -- t-Wert:} Anzahl der Standardabweichungen, die den Koeffizienten von Null trennt. Der Betrag des Wertes sollte (auch in Relation zum Standardfehler) groß sein um die Nullhypothese 'keine Relation der Variablen' verwerfen zu können.\\newline \\textbf{p.value -- p-Wert} p-Wert der t-Statistik. Wahrscheinlichkeit, dass eine Beobachtung auftritt, die gleich oder größer als der t-Wert ist. Ein kleiner p-Wert zeigt an, dass die Wahrscheinlichkeit einer zufälligen Enstehung dieses Modellergebnisses gering ist. Die Relation zwischen abhängiger und unabhängiger Variable ist damit signifikant.\\protect\\footnotemark{}",
+    caption = "\\label{tab:binford_model_result}Ergebniszusammenfassung des mit Binfords Variablenauswahl reproduzierten Modells für die einzelnen Koeffizienten. Alle Werte sind auf drei Nachkommastellen gerundet \\newline \\textbf{estimate -- Koeffizient:} Koeffizienten(schätzung) des Ergebnismodells (Intercept und Variablenslopes). \\newline \\textbf{std.error -- Standardfehler:} Durchschnittliche Abweichung des Koeffizienten vom tatsächlichen, durchschnittlichen Wert der abhängigen Variable. Der Wert sollte in Relation zum Koeffizienten klein sein.\\newline \\textbf{statistic -- t-Wert:} Anzahl der Standardabweichungen, die den Koeffizienten von Null trennt. Der Betrag des Wertes sollte (auch in Relation zum Standardfehler) groß sein um die Nullhypothese 'keine Relation der Variablen' verwerfen zu können.\\newline \\textbf{p.value -- p-Wert:} p-Wert der t-Statistik. Wahrscheinlichkeit, dass eine Beobachtung auftritt, die gleich oder größer als der t-Wert ist. Ein kleiner p-Wert zeigt an, dass die Wahrscheinlichkeit einer zufälligen Enstehung dieses Modellergebnisses gering ist. Die Relation zwischen abhängiger und unabhängiger Variable ist damit signifikant.\\protect\\footnotemark{}",
     booktabs = T
   ) %>%
   kableExtra::column_spec(1, bold = TRUE)
@@ -327,7 +331,7 @@ mod_vals[is.na(mod_vals)] <- ""
 mod_vals %>%
   knitr::kable(
     format = "latex",
-    caption = "\\label{tab:binford_model_result_2}Ergebniszusammenfassung des mit Binfords Variablenauswahl reproduzierten Modells. Alle Werte sind auf drei Nachkommastellen gerundet \\newline \\textbf{term:} Koeffizienten (Intercept und Variablenslopes) \\newline \\textbf{estimate:} \\newline \\textbf{std.error:} \\newline \\textbf{statistic:} \\newline \\textbf{p.value} huhu. \\protect\\footnotemark{}",
+    caption = "\\label{tab:binford_model_result_2}Ergebniszusammenfassung des mit Binfords Variablenauswahl reproduzierten Modells für das Gesamtmodell. Alle Werte sind auf drei Nachkommastellen gerundet. \\newline \\textbf{r.squared:} huhu \\newline \\textbf{adj.r.squared:} \\newline \\textbf{std.error:} \\newline \\textbf{sigma:} \\newline \\textbf{statistic} huhu. \\newline \\textbf{p.value} huhu. \\newline \\textbf{df} huhu. \\newline \\textbf{logLik} huhu. \\newline \\textbf{AIC} huhu. \\newline \\textbf{BIC} huhu. \\newline \\textbf{deviance} huhu. \\newline \\textbf{df.residual} huhu. \\protect\\footnotemark{}",
     booktabs = T
   ) %>%
   kableExtra::column_spec(1, bold = TRUE) %>%
@@ -355,7 +359,7 @@ Ich habe mich hier für die Implementierung eines solchen Verfahrens in der Funk
 
 Zunächst erfolgt die Berechnung des Ausgangsmodells:
 
-```{r create initial model, echo = TRUE} 
+```{r create initial model, echo = TRUE, cache=TRUE} 
 initial_model <- lm(larea ~ ., data = sel3)
 ```
 
