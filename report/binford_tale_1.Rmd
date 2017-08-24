@@ -39,6 +39,7 @@ Das Beispiel konzentiert sich auf die Variable AREA -- die Größe des Areals, d
     & (0.186574 * \mathit{LCOKLM}) + \\
     & (-0.110286 * \mathit{LRUNOFF}) + \\
     & (0.175157 * \mathit{WATRGRC}) + \\
+    & (-0.164604 * \mathit{MEDSTAB}) + \\
     & (-0.743144 * \mathit{PERWLTG}) + \\
     & (0.004706 * \mathit{RLOW}) + \\
     & (-0.080339 * \mathit{RUNGRC}) + \\
@@ -249,6 +250,7 @@ In einem letzten Schritt muss nun noch die Variable AREA durch die Variable LARE
     & (0.186574 * \mathit{LCOKLM}) + \\
     & (-0.110286 * \mathit{LRUNOFF}) + \\
     & (0.175157 * \mathit{WATRGRC}) + \\
+    & (-0.164604 * \mathit{MEDSTAB}) + \\
     & (-0.743144 * \mathit{PERWLTG}) + \\
     & (0.004706 * \mathit{RLOW}) + \\
     & (-0.080339 * \mathit{RUNGRC}) + \\
@@ -347,8 +349,13 @@ plot(binford_model)
 par(opar) 
 ```
 
-Tabelle \ref{tab:binford_model_result} enthält Koeffizienten und Fehlermargen des erzeugten Modells. Die Koeffizienten weichen aus mir unbekanntem Grund leicht von den von Binford errechneten ab. Abbildung \ref{fig:binford_model_plot} zeigt die vier diagnostischen Standardplots, die die Funktion `plot.lm()` aus stats bereitstellt. Das Modell scheint eine hohe Erklärungspotenz zu besitzen.
-<!-- TODO: Mehr dazu! -->
+```{r identify bad observations for binford model}
+# visual obersvations at the plots allow identification of outliers:
+outies_binford_model <- c(54, 296, 309)
+outies_binford_model_names <- main$X[outies_binford_model]
+```
+
+Tabelle \ref{tab:binford_model_result} enthälten Koeffizienten und zugehörige Kennwerte des erzeugten Modells. Ein Vergleich der Werte mit jenen in Gleichung \ref{eq:area_multi_log} ergibt, dass die Koeffizienten von den von Binford errechneten abweichen. Ich gehe davon aus, dass der Regressionsalgorithmus in SPSS geringfügig anders implementiert ist als derjenigen in `lm()` oder SPSS die Regression nicht mittels der Kleinste-Quadrate-Methode durchführt. Da die Werte nur geringfügig divergieren und Größenordnung sowie Vorzeichen übereinstimmen, gehe ich von einer nicht relevanten Abweichung aus, die ich hier nicht weiter diskutieren möchte. Tabelle \ref{tab:binford_model_result_2} gibt einige Kennwerte der Modellgüte wieder und Abbildung \ref{fig:binford_model_plot} die vier diagnostischen Standardplots, die die Funktion `plot.lm()` aus stats bereitstellt. Das Modell scheint eine hohe Erklärungspotenz zu besitzen, die abhängige Variable AREA also gut zu beschreiben. Starke Ausreißer gibt es nicht -- die überwiegende Mehrzahl der Beobachtungen wird durch das Modell gut erklärt. Nur einzelne Beobachtungen zeigen Auffälligkeiten: `r paste0(paste0(outies_binford_model, ": ", outies_binford_model_names), collapse = ", ")`. 
 
 Ich möchte nun versuchen, selbst ein Modell für die Variable AREA zu erstellen. Das Ergebnis der Multiplen Regression ist dabei einerseits abhängig von den Eingabevariablen, andererseits aber auch -- zumindest wenn sie nicht vollständig unkorreliert sind -- von deren Eingabereihenfolge. Da im Fall der vorliegenden Analyse keine theoretischen oder sachlogischen Überlegungen Eingang finden sollen, die die Variablenauswahl determinieren würden, müssten eigentlich alle Permutationen von Auswahl und Reihenfolge betrachtet werden. Bei `r ncol(sel3) - 1` unabhängigen Variablen ist allerdings die Anzahl allein der Permutationen weit größer als praktisch in irgendeiner Form verarbeitbar ($200! \approx 7.887*10^{374}$). Aus diesem Grund muss auf ein Verfahren der Schrittweisen Regressionsanalyse zurückgegriffen werden, das mittels Prüfgrößen selbständig und in verhältnismäßig wenigen Iterationsschritten eine Variablenauswahl trifft^[@backhaus_multivariate_2008, 100-105.].  
 
