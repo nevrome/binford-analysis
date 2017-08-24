@@ -2,7 +2,7 @@
 \let\origfigure\figure
 \let\endorigfigure\endfigure
 \renewenvironment{figure}[1][2] {
-    \expandafter\origfigure\expandafter[p]
+    \expandafter\origfigure\expandafter[ph]
 } {
     \endorigfigure
 }
@@ -10,7 +10,7 @@
 \let\origtable\table
 \let\endorigtable\endtable
 \renewenvironment{table}[1][2] {
-    \expandafter\origtable\expandafter[p]
+    \expandafter\origtable\expandafter[ph]
 } {
     \endorigtable
 }
