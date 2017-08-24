@@ -282,12 +282,15 @@ var_vals <- binford_model %>%
   dplyr::mutate_if(
     is.numeric,
     dplyr::funs(round(., 3))
-  ) 
+  ) %>%
+  dplyr::rename(
+    " " = "term"
+  )
 
 var_vals %>%
   knitr::kable(
     format = "latex",
-    caption = "\\label{tab:binford_model_result}Ergebniszusammenfassung des mit Binfords Variablenauswahl reproduzierten Modells. Alle Werte sind auf drei Nachkommastellen gerundet \\newline \\textbf{term:} Koeffizienten (Intercept und Variablenslopes) \\newline \\textbf{estimate:} \\newline \\textbf{std.error:} \\newline \\textbf{statistic:} \\newline \\textbf{p.value} huhu. \\protect\\footnotemark{}",
+    caption = "\\label{tab:binford_model_result}Ergebniszusammenfassung des mit Binfords Variablenauswahl reproduzierten Modells. Alle Werte sind auf drei Nachkommastellen gerundet \\newline \\textbf{estimate -- Koeffizient:} Koeffizienten(schätzung) des Ergebnismodells (Intercept und Variablenslopes) \\newline \\textbf{std.error -- Standardfehler:} Durchschnittliche Abweichung des Koeffizienten vom tatsächlichen, durchschnittlichen Wert der abhängigen Variable. Der Wert sollte in Relation zum Koeffizienten klein sein.\\newline \\textbf{statistic -- t-Wert:} Anzahl der Standardabweichungen, die den Koeffizienten von Null trennt. Der Betrag des Wertes sollte (auch in Relation zum Standardfehler) groß sein um die Nullhypothese 'keine Relation der Variablen' verwerfen zu können.\\newline \\textbf{p.value -- p-Wert} p-Wert der t-Statistik. Wahrscheinlichkeit, dass eine Beobachtung auftritt, die gleich oder größer als der t-Wert ist. Ein kleiner p-Wert zeigt an, dass die Wahrscheinlichkeit einer zufälligen Enstehung dieses Modellergebnisses gering ist. Die Relation zwischen abhängiger und unabhängiger Variable ist damit signifikant.\\protect\\footnotemark{}",
     booktabs = T
   ) %>%
   kableExtra::column_spec(1, bold = TRUE)
@@ -346,7 +349,7 @@ Ich möchte nun versuchen, selbst ein Modell für die Variable AREA zu erstellen
 
 Ich habe mich hier für die Implementierung eines solchen Verfahrens in der Funktion `stepAIC()` des R Pakets MASS^[@venables_modern_2002, 172-177.] entschieden. `stepAIC()` erreicht die Modellreduktion durch schrittweise Minimierung der Prüfgröße AIC (Akaike Information Criterion -- $\mathit{AIC} = -2 * \mathit{maximierte} \mathit{Log-Likelihood} + 2 * \# Parameter$), die man vereinfacht als Maß für die Passgenauigkeit eines statistischen Modells verstehen kann. `stepAIC()` benötigt dafür ein berechnetes Eingangsmodell, das nach Möglichkeit nah am besten Ergebnismodell liegen sollte, sowie Modelldefinitionen jeweils eines maximal und minimal komplexen Ergebnismodells. Da das Ausgangsmodell mit `r nrow(sel3)` Beobachtungen und `r ncol(sel3)` Variablen in diesem Kontext als komplex gelten darf, möchte ich mich zunächst an folgende Empfehlung der Autoren halten, und dem Algorithmus stattdessen nur dieses Initialmodell zur Verfügung stellen.
 
-> If a large model is selected as the starting point, the scope and scale arguments have generally reasonable defaults, but for a sma1l model where the process is probably to be one of adding terms, they will usually need both to be supplied. 
+> If a large model is selected as the starting point, the scope and scale arguments have generally reasonable defaults, but for a small model where the process is probably to be one of adding terms, they will usually need both to be supplied. 
 >  
 > -- [@venables_modern_2002, 175.]
 
