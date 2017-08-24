@@ -377,17 +377,43 @@ plot(initial_model)
 par(opar) 
 ```
 
-```{r identify bad observations}
-# visual obersvations at the plots allow identification of outliers:
-outies <- c(309)
-outies_names <- main$X[outies]
+```{r initial model estimate table 2, cache=TRUE, dependson="create initial model"}
+init_mod_vals <- initial_model %>%
+  broom::glance() %>%
+  tidyr::gather(var, value) %>% 
+  dplyr::mutate(
+    var2 = c(var[7:11], rep(NA, 6)),
+    value2 = c(value[7:11], rep(NA, 6))
+  ) %>%
+  magrittr::extract(1:5,) %>%
+  dplyr::mutate_if(
+    is.numeric,
+    dplyr::funs(round(., 3))
+  ) %>% dplyr::mutate_if(
+    is.numeric,
+    as.character
+  ) %>%
+  dplyr::rename(
+    " " = "var",
+    " " = "var2",
+    "value" = "value2"
+  )
+
+init_mod_vals[is.na(init_mod_vals)] <- ""
+
+init_mod_vals %>%
+  knitr::kable(
+    format = "latex",
+    caption = "\\label{tab:initial_model_result_2}Ergebniszusammenfassung des initialen Modells. Alle Werte sind auf drei Nachkommastellen gerundet.",
+    booktabs = T
+  ) %>%
+  kableExtra::column_spec(1, bold = TRUE) %>%
+  kableExtra::column_spec(3, bold = TRUE)
 ```
 
-<!-- TODO: Folgende Analyse ist falsch --> 
+Abbildung \ref{fig:initial_model_plot} und Tabelle \ref{tab:initial_model_result_2} zeigen, dass dieses Modell auf Grundlage aller Variablen herausragende Vorhersagefähigkeiten für die Variable AREA besitzt. Gleichermaßen entbehrt es jedoch jeder fachwissenschaftlichen Aussage, da sich eine Gesamtheit von `r ncol(sel3)` semantisch höchst unterschiedlichen Variablen jeder integrativen Interpretation entzieht. Das Modell ist nicht geeignet, ein besseres Verständnis der zugrundeliegenden naturräumlichen, kulturellen und sozioökonomischen Zusammenhänge zu generieren. Erst die Vereinfachung des Modells wird die Ableitung klarer, prüfbarer Hypothesen ermöglichen.
 
-Für geringe Arealgrößen geben die Residuen Anlass zur Annahme, dass zwischen abhängiger und unabhägigen Variablen eine nicht-lineare Beziehung besteht, die durch das Modell schlecht abgebildet wird (siehe Abbildung \ref{fig:initial_model_plot}). Einige Beobachtungen (u.A. `r paste0(paste0(outies, ": ", outies_names), collapse = ", ")`) treten als Ausreißer auf, die ich zunächst allerdings ignorieren möchte. 
-
-Stattdessen ein erster Durchlauf der automatischen, schrittweisen Modellreduktion: 
+Entsprechend nun also ein erster Durchlauf der automatischen, schrittweisen Modellreduktion: 
 
 ```{r stepwise multiple regression, cache=TRUE, dependson="create initial model", message=FALSE, echo=TRUE}
 model1 <- MASS::stepAIC(
@@ -413,9 +439,7 @@ model1$anova %>% as.data.frame() %>% dplyr::rename("Dev" = "Deviance") %>% knitr
   kableExtra::kable_styling(font_size = 8)
 ```
 
-Tabelle \ref{tab:model1_anova} zeigt die Reduktionsschritte. `r nrow(model1$anova)` Variablen wurden von `stepAIC()` entfernt, dann allerdings kam der Prozess in diesem Durchlauf zum halten. Der Vergleich des *Residuals vs Leverage* Plots in Abbildung \ref{fig:initial_model_plot} und Abbildung \ref{fig:model1_plot} legt nahe, dass sich die durchschnittliche Wirkung individueller Beobachtungen auf das Gesamtergebnis verringert hat. Anzunehmen ist, dass Variablen mit großer Variablität entfernt wurden. Der Vergleich mit Abbildung \ref{fig:binford_model_plot} legt nahe, dass sich dieser Trend bei weiterer Reduktion des Modells fortsetzen wird.
-
-Die Reduktion auf `r ncol(sel3) - nrow(model1$anova)` Variablen ist noch nicht ausreichend, um an die deskriptive Einfachheit des Binford-Modells heranzureichen. Die Minimierung des AIC-Werts ist offensichtlich kein ausreichend starkes Optimierungskriterium:
+In Tabelle \ref{tab:model1_anova} werden die Reduktionsschritte zeilenweise dokumentiert. `r nrow(model1$anova)` Variablen wurden von `stepAIC()` entfernt, dann allerdings kam der Prozess in diesem Durchlauf zum halten. Der Vergleich des *Residuals vs Leverage* Plots in Abbildung \ref{fig:initial_model_plot} und Abbildung \ref{fig:model1_plot} legt nahe, dass sich die durchschnittliche Wirkung individueller Beobachtungen auf das Gesamtergebnis verringert hat. Anzunehmen ist, dass Variablen mit großer Variablität entfernt wurden. Der Vergleich mit Abbildung \ref{fig:binford_model_plot} lässt die Vermutung zu, dass sich dieser Trend bei weiterer Reduktion des Modells fortsetzen wird. `r ncol(sel3) - nrow(model1$anova)` Variablen sind tatsächlich angesichts der deskriptiven Einfachheit des Binford-Modells noch kein befriedigendes Vereinfachungsergebnis. Die Minimierung des AIC-Werts ist scheinbar kein starkes Optimierungskriterium:
 
 > This suggests, correctly, that selecting terms on the basis of AIC can be somewhat permissive in its choice of terms, being roughly equivalent to choosing an F-cutoff of 2.  
 >  
@@ -466,7 +490,7 @@ MASS::dropterm(model1, test = "F") %>%
   kableExtra::column_spec(1, bold = TRUE)
 ```
 
-Ich möchte das Vorgehen, mit `dropterm()` schrittweise Variablen zu entfernen automatisieren und dann so oft wiederholt zur Anwendung bringen, bis... <!-- TODO -->
+Ich möchte das Vorgehen, mit `dropterm()` schrittweise Variablen zu entfernen automatisieren und dann so oft wiederholt zur Anwendung bringen, bis die Anzahl der Variablen im Ergebnismodell der in Binfords Modell entspricht. Dafür habe ich einen simplen Algorithmus formuliert, der in einer Schleife die `dropterm()`-Funktion ausführt, die Variable mit dem größten p-Wert identifiziert und diese dann dann für den nächsten Schleifendurchlauf aus dem Modell entfernt. 
 
 ```{r dropterm loop, echo=TRUE, cache=TRUE, dependson="stepwise multiple regression"}
 # dublicate model object 
@@ -513,7 +537,7 @@ model2 %>%
   ) %>%
   knitr::kable(
     format = "latex",
-    caption = "\\label{tab:model2_result}Modellergebnis. \\newline \\textbf{term:} \\newline \\textbf{estimate:} \\newline \\textbf{std.error:} \\newline \\textbf{statistic:} \\newline \\textbf{p.value}",
+    caption = "\\label{tab:model2_result}Modellergebnis.",
     booktabs = T
   ) %>%
   kableExtra::column_spec(1, bold = TRUE)
@@ -593,7 +617,7 @@ model4 %>%
   ) %>%
   knitr::kable(
     format = "latex",
-    caption = "\\label{tab:model4_result}Modellergebnis. \\newline \\textbf{term:} \\newline \\textbf{estimate:} \\newline \\textbf{std.error:} \\newline \\textbf{statistic:} \\newline \\textbf{p.value}",
+    caption = "\\label{tab:model4_result}Modellergebnis.",
     booktabs = T
   ) %>%
   kableExtra::column_spec(1, bold = TRUE)
@@ -607,7 +631,7 @@ fin_mod_vals <- model4 %>%
     var2 = c(var[7:11], rep(NA, 6)),
     value2 = c(value[7:11], rep(NA, 6))
   ) %>%
-  magrittr::extract(1:6,) %>%
+  magrittr::extract(1:5,) %>%
   dplyr::mutate_if(
     is.numeric,
     dplyr::funs(round(., 3))
@@ -626,7 +650,7 @@ fin_mod_vals[is.na(fin_mod_vals)] <- ""
 fin_mod_vals %>%
   knitr::kable(
     format = "latex",
-    caption = "\\label{tab:binford_model_result_2}Ergebniszusammenfassung des mit Binfords Variablenauswahl reproduzierten Modells. Alle Werte sind auf drei Nachkommastellen gerundet \\newline \\textbf{term:} Koeffizienten (Intercept und Variablenslopes) \\newline \\textbf{estimate:} \\newline \\textbf{std.error:} \\newline \\textbf{statistic:} \\newline \\textbf{p.value} huhu.",
+    caption = "\\label{tab:binford_model_result_2}Ergebniszusammenfassung des finalen Modells. Alle Werte sind auf drei Nachkommastellen gerundet.",
     booktabs = T
   ) %>%
   kableExtra::column_spec(1, bold = TRUE) %>%
