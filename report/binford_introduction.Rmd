@@ -24,13 +24,13 @@ Binford fasst seine methodischen Ambitionen unter anderem folgendermaßen zusamm
 > [...]
 > And, since one of the goals of this book is to explain variability among hunter-gatherers, the explanatory theory that I have developed is available for archaeologists to use deductively by reasoning to or simulating changing conditions and thereby providing patterns of change that can be expected to occur in the archaeological record at specific locations.
 >  
-> -- [@binford_constructing_2001, 2-3.]
+> -- @binford_constructing_2001, 2-3.
 
 Die systematische Suche nach übergeordneten, wiederkehrenden Strukturen in der Mensch-Umwelt und Mensch-Mensch Beziehung ist eines der wesentlichen Themen des Buches. Die Komplexität dieser Aufgabe erklärt seinen bemerkenswerten Umfang und den dennoch teilweise fragmenthaften Charakter. Binford konstruiert allgemeine Lehrsätze, die für alle Jäger- und Sammlergruppen Gültigkeit beanspruchen. Erarbeitet auf Grundlage eines begrenzten Datensatzes und eines limitierten, analytischen Methodensets sind diese im Verlauf des Buches formulierten Axiome, qualitativen und quantitativen Thesen wissenschaftliche Aussagen. Die ihnen zugrundeliegenden Analysen sollten reproduzierbar und falsifizierbar sein. Zur Illustration ein Beispiel einer zufällig ausgewählten These, die im zehnten Kapitel formuliert wird:
 
 > Proposition 10.19: As packing increases, groups that are dependent upon aquatic resources should resort to more complex subsistence technology. Increasing complexity in the design of weapons should also be associated with hunter-gatherer groups that are not primarily dependent upon aquatic resources as a function of their more specialized exploitation of a reduced number of high-yield species (see generalizations 10.15 and 10.16).
 >  
-> -- [@binford_constructing_2001, 392.]
+> -- @binford_constructing_2001, 392.
 
 Hier wird ein Rahmen definiert ("groups that are dependent upon aquatic resources") und für den Fall eines Veränderungsprozesses ("as packing increases") eine Vorhersage ("should resort to more complex subsistence technology") getroffen, die dann noch weiter kontextualisiert und präzisiert wird.  
  

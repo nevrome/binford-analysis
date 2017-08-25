@@ -22,7 +22,7 @@ output:
 geometry: margin=1.5cm
 bibliography: bibliography.bib
 mainfont: "Arial"
-csl: deutsches-archaologisches-institut.csl
+csl: https://www.zotero.org/styles/chicago-author-date-de
 ---
 
 \fancyhead{}

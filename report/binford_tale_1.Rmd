@@ -26,7 +26,7 @@ Im 5. Kapitel "Designing Frames of Reference and Exploring Projections" beschrei
 
 > If I can develop continously scaled equations that summarize the relationship between the properties of hunter-gatherer systems and suites of environmental variables, it is likely that these equations could be used to project estimates for habitats from which there are few, if any, actual cases of hunter-gatherers documented in the resent past. But since such equations summarize interactive ecological relationships that are not confined to particular time periods, they may furnish strong clues about hunter-gatherer organizational variability that will provide a strong platform for subsequent theory building.  
 > 
-> -- [@binford_constructing_2001, 154.]
+> -- @binford_constructing_2001, 154.
 
 Das Beispiel konzentiert sich auf die Variable AREA -- die Größe des Areals, das von einer Jäger- und Sammlergruppe relativ exklusiv genutzt wird gemessen in Vielfachen von 100km². Mittels multipler Regression auf Grundlage des Gruppendatensatzes kommt Binford zu folgender Gleichung \ref{eq:area_multi} (bzw. umgeformt Gleichung \ref{eq:area_multi_log}), die die abhängige Variable AREA in Relation zu mehreren unabhängigen Variablen (siehe Tabelle \ref{tab:variable_description_1}) beschreibt:
 
@@ -363,7 +363,7 @@ Ich habe mich hier für die Implementierung eines solchen Verfahrens in der Funk
 
 > If a large model is selected as the starting point, the scope and scale arguments have generally reasonable defaults, but for a small model where the process is probably to be one of adding terms, they will usually need both to be supplied. 
 >  
-> -- [@venables_modern_2002, 175.]
+> -- @venables_modern_2002, 175.
 
 Zunächst erfolgt die Berechnung des Ausgangsmodells:
 
@@ -443,7 +443,7 @@ In Tabelle \ref{tab:model1_anova} werden die Reduktionsschritte zeilenweise doku
 
 > This suggests, correctly, that selecting terms on the basis of AIC can be somewhat permissive in its choice of terms, being roughly equivalent to choosing an F-cutoff of 2.  
 >  
-> -- [@venables_modern_2002, 176.]
+> -- @venables_modern_2002, 176.
 
 Wir können nun fortfahren, indem wir entweder das k-Attribut in `stepAIC()` (*the multiple of the number of degrees of freedom used for the penalty*) erhöhen und den Prozess erneut starten, oder mittels F-Statistik schrittweise jene Variablen entfernen, die keinen signifikanten Einfluss auf das Ergebnismodell nehmen. Um diese zu identifizieren, steht in MASS die Funktion `dropterm()` bereit.  
 
