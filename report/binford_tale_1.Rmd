@@ -271,7 +271,7 @@ sel3 <- sel2 %>%
 
 ## Multiple Regression
 
-Multiple Lineare Regression ist ein Verfahren der Multivariaten Statistik, das die Erklärung und Vorhersage einer abhängigen Variable durch mehrere unabhängige Variablen erlaubt^[@backhaus_multivariate_2008, 52-53/64-65.]. Die Berechnung der Regressionsparameter funktioniert wie bei der Einfachen Regressionsanalyse durch Reduktion der Fehlerquadrate. In einem ersten Schritt möchte ich das Modell von Binford nachstellen, indem ich seine Auswahl an Eingabevariablen übernehme und die Regression mittels der Funktion `lm()` aus dem R Basispaket stats darauf anwende. 
+Multiple Lineare Regression ist ein Verfahren der Multivariaten Statistik, das die Erklärung und Vorhersage einer abhängigen Variable durch mehrere unabhängige Variablen erlaubt^[@backhaus_multivariate_2008, 52-53/64-65.]. Regressionsparameter können wie bei der Einfachen Regressionsanalyse durch Reduktion der Fehlerquadrate berechnet werden. In einem ersten Schritt möchte ich das Modell von Binford nachstellen, indem ich seine Auswahl an Eingabevariablen übernehme und die Regression mittels der Funktion `lm()` aus dem R Basispaket stats darauf anwende. 
 
 ```{r recreate binford model, echo=TRUE, cache=TRUE}
 binford_model <- lm(
@@ -355,9 +355,9 @@ outies_binford_model <- c(54, 296, 309)
 outies_binford_model_names <- main$X[outies_binford_model]
 ```
 
-Tabelle \ref{tab:binford_model_result} enthälten Koeffizienten und zugehörige Kennwerte des erzeugten Modells. Ein Vergleich der Werte mit jenen in Gleichung \ref{eq:area_multi_log} ergibt, dass die Koeffizienten von den von Binford errechneten abweichen. Ich gehe davon aus, dass der Regressionsalgorithmus in SPSS geringfügig anders implementiert ist als derjenigen in `lm()` oder SPSS die Regression nicht mittels der Kleinste-Quadrate-Methode durchführt. Da die Werte nur geringfügig divergieren und Größenordnung sowie Vorzeichen übereinstimmen, gehe ich von einer nicht relevanten Abweichung aus, die ich hier nicht weiter diskutieren möchte. Tabelle \ref{tab:binford_model_result_2} gibt einige Kennwerte der Modellgüte wieder und Abbildung \ref{fig:binford_model_plot} die vier diagnostischen Standardplots, die die Funktion `plot.lm()` aus stats bereitstellt. Das Modell scheint eine hohe Erklärungspotenz zu besitzen, die abhängige Variable AREA also gut zu beschreiben. Starke Ausreißer gibt es nicht -- die überwiegende Mehrzahl der Beobachtungen wird durch das Modell gut erklärt. Nur einzelne Beobachtungen zeigen Auffälligkeiten: `r paste0(paste0(outies_binford_model, ": ", outies_binford_model_names), collapse = ", ")`. 
+Tabelle \ref{tab:binford_model_result} enthälten Koeffizienten und zugehörige Kennwerte des erzeugten Modells. Ein Vergleich der Werte mit jenen in Gleichung \ref{eq:area_multi_log} ergibt, dass die Koeffizienten von den von Binford errechneten abweichen. Ich gehe davon aus, dass der Regressionsalgorithmus in SPSS geringfügig anders implementiert ist als derjenigen in `lm()` oder SPSS die Regression nicht mittels einfacher Reduktion der Fehlerquadrate durchführt. Unter dem Hyperonym *Robuste Regression* werden verschiedene andere Verfahren diskutiert^[@Jann2010]. Da die Werte nur geringfügig divergieren und Größenordnung sowie Vorzeichen übereinstimmen, gehe ich von einer nicht relevanten Abweichung aus, die ich hier nicht weiter diskutieren möchte. Tabelle \ref{tab:binford_model_result_2} gibt einige Kennwerte der Modellgüte und Abbildung \ref{fig:binford_model_plot} die vier diagnostischen Standardplots wieder, die die Funktionen `summary.lm()` und `plot.lm()` aus stats bereitstellen. Das Modell scheint eine hohe Erklärungspotenz zu besitzen, die abhängige Variable AREA also gut zu beschreiben. Starke Ausreißer gibt es nicht -- die überwiegende Mehrzahl der Beobachtungen wird durch das Modell gut erklärt. Nur einzelne Beobachtungen zeigen Auffälligkeiten: `r paste0(paste0(outies_binford_model, ": ", outies_binford_model_names), collapse = ", ")`. 
 
-Ich möchte nun versuchen, selbst ein Modell für die Variable AREA zu erstellen. Das Ergebnis der Multiplen Regression ist dabei einerseits abhängig von den Eingabevariablen, andererseits aber auch -- zumindest wenn sie nicht vollständig unkorreliert sind -- von deren Eingabereihenfolge. Da im Fall der vorliegenden Analyse keine theoretischen oder sachlogischen Überlegungen Eingang finden sollen, die die Variablenauswahl determinieren würden, müssten eigentlich alle Permutationen von Auswahl und Reihenfolge betrachtet werden. Bei `r ncol(sel3) - 1` unabhängigen Variablen ist allerdings die Anzahl allein der Permutationen weit größer als praktisch in irgendeiner Form verarbeitbar ($200! \approx 7.887*10^{374}$). Aus diesem Grund muss auf ein Verfahren der Schrittweisen Regressionsanalyse zurückgegriffen werden, das mittels Prüfgrößen selbständig und in verhältnismäßig wenigen Iterationsschritten eine Variablenauswahl trifft^[@backhaus_multivariate_2008, 100-105.].  
+Ich möchte nun versuchen, selbst ein Modell für die Variable AREA zu erstellen. Dabei ist zu beachten, dass das Ergebnis der Multiplen Regression einerseits abhängig von den Eingabevariablen ist, andererseits aber auch -- zumindest wenn sie nicht vollständig unkorreliert sind -- von deren Eingabereihenfolge. Da im Fall der vorliegenden Analyse keine theoretischen oder sachlogischen Überlegungen Eingang finden sollen, die die Variablenauswahl determinieren würden, müssten eigentlich alle Permutationen von Auswahl und Reihenfolge betrachtet werden. Bei `r ncol(sel3) - 1` unabhängigen Variablen ist allerdings die Anzahl allein der Permutationen weit größer als praktisch in irgendeiner Form verarbeitbar ($200! \approx 7.887*10^{374}$). Aus diesem Grund muss auf ein Verfahren der Schrittweisen Regressionsanalyse zurückgegriffen werden, das mittels Prüfgrößen selbständig und in verhältnismäßig wenigen Iterationsschritten eine Variablenauswahl trifft^[@backhaus_multivariate_2008, 100-105.].  
 
 Ich habe mich hier für die Implementierung eines solchen Verfahrens in der Funktion `stepAIC()` des R Pakets MASS^[@venables_modern_2002, 172-177.] entschieden. `stepAIC()` erreicht die Modellreduktion durch schrittweise Minimierung der Prüfgröße AIC (Akaike Information Criterion -- $\mathit{AIC} = -2 * \mathit{maximierte} \mathit{Log-Likelihood} + 2 * \# Parameter$), die man vereinfacht als Maß für die Passgenauigkeit eines statistischen Modells verstehen kann. `stepAIC()` benötigt dafür ein berechnetes Eingangsmodell, das nach Möglichkeit nah am besten Ergebnismodell liegen sollte, sowie Modelldefinitionen jeweils eines maximal und minimal komplexen Ergebnismodells. Da das Ausgangsmodell mit `r nrow(sel3)` Beobachtungen und `r ncol(sel3)` Variablen in diesem Kontext als komplex gelten darf, möchte ich mich zunächst an folgende Empfehlung der Autoren halten, und dem Algorithmus stattdessen nur dieses Initialmodell zur Verfügung stellen.
 
@@ -430,22 +430,24 @@ par(opar)
 ```
 
 ```{r anova table of stepAIC, cache=TRUE, dependson="stepwise multiple regression"}
-model1$anova %>% as.data.frame() %>% dplyr::rename("Dev" = "Deviance") %>% knitr::kable(
+model1$anova %>% as.data.frame() %>% dplyr::rename("Dev" = "Deviance") %>% 
+  dplyr::select(-Df) %>% 
+  knitr::kable(
     format = "latex",
-    caption = "\\label{tab:model1_anova}ANOVA Komponente des Ergebnismodelldatentyps von `stepAIC()`.  Zeigt die schrittweise Entfernung von Variablen zur Reduktion der Modellkomplexität und zugehörige, diagnostische Prüfgrößen. \\newline \\textbf{Step:} Variable, die in diesem Schritt entfernt oder hinzugefügt wurde \\newline \\textbf{Df -- degrees of freedom:} Anzahl der Freiheitsgrade ('Anzahl der Werte in der abschließenden Berechnung einer Statistik, die frei variieren können') \\newline \\textbf{Dev -- Deviance:} Unterschied in der Summe der Fehlerquadrate gegenüber dem vorangegangenen Schritt \\newline \\textbf{Resid. Df -- residual degrees of freedom:} Gesamtanzahl der Freiheitsgrade minus Freiheitsgrade des Modells \\newline \\textbf{Resid. Dev -- residual deviance:}  \\newline \\textbf{AIC -- Akaike information criterion:} siehe Text",
+    caption = "\\label{tab:model1_anova}ANOVA Komponente des Ergebnismodelldatentyps von `stepAIC()`.  Zeigt die schrittweise Entfernung von Variablen zur Reduktion der Modellkomplexität und zugehörige, diagnostische Prüfgrößen. \\newline \\textbf{Step -- Reduktionsschritt:} Variable, die in diesem Schritt entfernt oder wieder hinzugefügt wurde. \\newline \\textbf{Dev -- Deviance, Resid. Df -- Anzahl der Freiheitsgrade, AIC -- Akaike information criterion:} Siehe Tabelle \\ref{tab:binford_model_result_2}. \\newline \\textbf{Resid. Dev -- residual deviance:} Eine Konstante abzüglich zwei mal die maximierte Log-Likelihood. Ist nur bei gesättigten Modellen aussagekräftig und kann hier ignoriert werden.",
     booktabs = T
   ) %>%
   kableExtra::column_spec(1, bold = TRUE) %>%
-  kableExtra::kable_styling(font_size = 8)
+  kableExtra::kable_styling(font_size = 9)
 ```
 
-In Tabelle \ref{tab:model1_anova} werden die Reduktionsschritte zeilenweise dokumentiert. `r nrow(model1$anova)` Variablen wurden von `stepAIC()` entfernt, dann allerdings kam der Prozess in diesem Durchlauf zum halten. Der Vergleich des *Residuals vs Leverage* Plots in Abbildung \ref{fig:initial_model_plot} und Abbildung \ref{fig:model1_plot} legt nahe, dass sich die durchschnittliche Wirkung individueller Beobachtungen auf das Gesamtergebnis verringert hat. Anzunehmen ist, dass Variablen mit großer Variablität entfernt wurden. Der Vergleich mit Abbildung \ref{fig:binford_model_plot} lässt die Vermutung zu, dass sich dieser Trend bei weiterer Reduktion des Modells fortsetzen wird. `r ncol(sel3) - nrow(model1$anova)` Variablen sind tatsächlich angesichts der deskriptiven Einfachheit des Binford-Modells noch kein befriedigendes Vereinfachungsergebnis. Die Minimierung des AIC-Werts ist scheinbar kein starkes Optimierungskriterium:
+In Tabelle \ref{tab:model1_anova} werden die Reduktionsschritte zeilenweise dokumentiert. Mit dem Entfernen von Variablen nimmt die Anzahl der Freiheitsgrade schrittweise zu, während der AIC-Wert langsam abnimmt. `r nrow(model1$anova)` Variablen wurden von `stepAIC()` entfernt, dann allerdings kam der Prozess in diesem Durchlauf zum Halten. Der Vergleich des *Residuals vs Leverage* Plots in Abbildung \ref{fig:initial_model_plot} und Abbildung \ref{fig:model1_plot} legt nahe, dass sich die durchschnittliche Wirkung individueller Beobachtungen auf das Gesamtergebnis verringert hat. Anzunehmen ist, dass Variablen mit großer Variablität entfernt wurden. Abbildung \ref{fig:binford_model_plot} lässt die Vermutung zu, dass sich dieser Trend bei weiterer Reduktion des Modells fortsetzen wird. `r ncol(sel3) - nrow(model1$anova)` Variablen sind tatsächlich angesichts der deskriptiven Einfachheit des Binford-Modells noch kein befriedigendes Vereinfachungsergebnis. Die Minimierung des AIC-Werts ist scheinbar kein starkes Optimierungskriterium:
 
 > This suggests, correctly, that selecting terms on the basis of AIC can be somewhat permissive in its choice of terms, being roughly equivalent to choosing an F-cutoff of 2.  
 >  
 > -- @venables_modern_2002, 176.
 
-Wir können nun fortfahren, indem wir entweder das k-Attribut in `stepAIC()` (*the multiple of the number of degrees of freedom used for the penalty*) erhöhen und den Prozess erneut starten, oder mittels F-Statistik schrittweise jene Variablen entfernen, die keinen signifikanten Einfluss auf das Ergebnismodell nehmen. Um diese zu identifizieren, steht in MASS die Funktion `dropterm()` bereit.  
+Wir können nun fortfahren, indem wir entweder das k-Attribut in `stepAIC()` (*the multiple of the number of degrees of freedom used for the penalty*) erhöhen und den Prozess erneut starten, oder mittels F-Statistik schrittweise jene Variablen entfernen, die keinen signifikanten Einfluss auf das Ergebnismodell nehmen. Um diese zu identifizieren steht in MASS die Funktion `dropterm.lm()` bereit, die die Modelleinpassung für alle möglichen Modelle durchführt, die eine Variable weniger inkorporieren als das Ausgangsmodell. 
 
 <!-- https://www.r-bloggers.com/manual-variable-selection-using-the-dropterm-function/ --> 
 
@@ -453,20 +455,24 @@ Wir können nun fortfahren, indem wir entweder das k-Attribut in `stepAIC()` (*t
 MASS::dropterm(model1, test = "F")
 ```
 
-Tabelle \ref{tab:dropterm_example} gibt Einblick... <!-- TODO -->
+Tabelle \ref{tab:dropterm_example} gibt Einblick in die Prüfgrößen, die `dropterm(test = "F")` berechnet. Offensichtlich verändert sich die Modellgüte je nach dem, welche Variablen entfernt werden. Große Werte für *Pr(F)* deuten auf Variablen hin, die entfernt werden sollten^[@venables_modern_2002, 176.]. 
 
 ```{r dropterm example table, cache=TRUE, cache=TRUE, dependson="stepwise multiple regression"}
 MASS::dropterm(model1, test = "F") %>%
   as.data.frame() %>%
-  magrittr::extract(1:10, ) %>%
+  magrittr::extract(1:42, ) %>%
   tibble::rownames_to_column() %>%
   dplyr::select(
-    -AIC
+    -Df
   ) %>%
   dplyr::mutate_at(
     c("Sum of Sq", "RSS", "F Value"),
-    dplyr::funs(round(., 2))
-  ) %>%  
+    dplyr::funs(round(., 4))
+  ) %>% 
+  dplyr::mutate_at(
+    c("AIC"),
+    dplyr::funs(round(., 0))
+  ) %>%
   dplyr::mutate_at(
     c("Pr(F)"),
     dplyr::funs(round(., 4))
@@ -474,21 +480,23 @@ MASS::dropterm(model1, test = "F") %>%
   dplyr::mutate_all(
     dplyr::funs(as.character(.))
   ) %>%
-  # add decorative ... at the beginning and end
+  # add decorative ... at the end
   rbind(
     ., 
     data.frame(
-      rowname = "...", Df = "...", `Sum of Sq` = "...", RSS = "...",
+      rowname = "...", `Sum of Sq` = "...", RSS = "...", AIC = "...",
       `F Value` = "...", `Pr(F)` = "...", check.names = F
     )
   ) %>%
   knitr::kable(
     format = "latex",
-    caption = "\\label{tab:dropterm_example}dropterm Tabelle: Maße der Modellgüte für verschiedene Variablen \\newline \\textbf{Df - degrees of freedom:} siehe oben \\newline \\textbf{Sum of Sq -- sum of squared deviations:} Abweichung der individuellen Werte vom Mittelwert aller Werte \\newline \\textbf{RSS -- residual sum of squares:} Abweichung der Vorhersagen für die abhängige Variable von ihren tatsächlichen Werten \\newline \\textbf{AIC -- Akaike information criterion:} siehe Text \\newline \\textbf{F Value:} Einganswert des F-Tests \\newline \\textbf{Pr(F) -- probability of F-Value:} Maß für die Wahrscheinlichkeit des F-Werts. Kleine Werte sind ein Indikator für eine wichtige Variable",
+    caption = "\\label{tab:dropterm_example}dropterm Tabelle: Maße der Modellgüte bei Entfernen der jeweiligen Variable aus dem Modell. Alle Werte sind auf vier Nachkommastellen gerundet, der AIC-Wert auf ganze Zahlen. \\newline \\textbf{Sum of Sq -- ESS -- explained sum of squares:} Summe der Abweichungsquadrate der Modellvorhersage zum arithmetischen Mittel der Beobachtungen. \\newline \\textbf{RSS -- residual sum of squares:} Summe der Abweichungsquadrate der Modellvorhersage zu allen Beobachtungen. \\newline \\textbf{AIC -- Akaike information criterion:} Siehe Tabelle \\ref{tab:binford_model_result_2}. \\newline \\textbf{F Value:} Eingangswert des F-Tests. \\newline \\textbf{Pr(F) -- probability of F-Value:} Maß für die Wahrscheinlichkeit des F-Werts im F-Test der Gesamtsignifikanz. Ist die Wahrscheinlichkeit klein, kann die Nullhypothese, dass kein wirklicher Zusammenhang zwischen abhängiger und unabhängigen Variablen besteht, verworfen werden.\\protect\\footnotemark{}",
     booktabs = T
   ) %>%
   kableExtra::column_spec(1, bold = TRUE)
 ```
+
+\footnotetext{@gordon2015regression}
 
 Ich möchte das Vorgehen, mit `dropterm()` schrittweise Variablen zu entfernen automatisieren und dann so oft wiederholt zur Anwendung bringen, bis die Anzahl der Variablen im Ergebnismodell der in Binfords Modell entspricht. Dafür habe ich einen simplen Algorithmus formuliert, der in einer Schleife die `dropterm()`-Funktion ausführt, die Variable mit dem größten p-Wert identifiziert und diese dann dann für den nächsten Schleifendurchlauf aus dem Modell entfernt. 
 
@@ -650,7 +658,7 @@ fin_mod_vals[is.na(fin_mod_vals)] <- ""
 fin_mod_vals %>%
   knitr::kable(
     format = "latex",
-    caption = "\\label{tab:binford_model_result_2}Ergebniszusammenfassung des finalen Modells. Alle Werte sind auf drei Nachkommastellen gerundet.",
+    caption = "\\label{tab:model4_result_2}Ergebniszusammenfassung des finalen Modells. Alle Werte sind auf drei Nachkommastellen gerundet.",
     booktabs = T
   ) %>%
   kableExtra::column_spec(1, bold = TRUE) %>%
