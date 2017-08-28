@@ -460,7 +460,7 @@ Tabelle \ref{tab:dropterm_example} gibt Einblick in die Prüfgrößen, die `drop
 ```{r dropterm example table, cache=TRUE, cache=TRUE, dependson="stepwise multiple regression"}
 MASS::dropterm(model1, test = "F") %>%
   as.data.frame() %>%
-  magrittr::extract(1:42, ) %>%
+  magrittr::extract(1:40, ) %>%
   tibble::rownames_to_column() %>%
   dplyr::select(
     -Df
@@ -530,7 +530,7 @@ for (i in 1:to_drop) {
 }
 ```
 
-```{r plot model2, warning=FALSE, cache=TRUE, dependson="dropterm loop", fig.height=7, fig.cap="\\label{fig:model2_plot}Diagnostische Plots für das Modell nach ...."}
+```{r plot model2, warning=FALSE, cache=TRUE, dependson="dropterm loop", fig.height=7, fig.cap="\\label{fig:model2_plot}Diagnostische Plots für das Modell nach Anwendung des `dropterm()`-Algorithmus."}
 opar <- par(mfrow=c(2,2)) 
 plot(model2)
 par(opar) 
@@ -545,15 +545,13 @@ model2 %>%
   ) %>%
   knitr::kable(
     format = "latex",
-    caption = "\\label{tab:model2_result}Modellergebnis.",
+    caption = "\\label{tab:model2_result}Ergebniszusammenfassung für die einzelnen Koeffizienten des mittels `stepAIC()` und `dropterm()` aus der Gesamtvariablenmenge reduzierten Modells. Alle Werte sind auf drei Nachkommastellen gerundet.",
     booktabs = T
   ) %>%
   kableExtra::column_spec(1, bold = TRUE)
 ```
 
-Haha...
-
-```{r final model, cache=TRUE}
+```{r bad variables, cache=TRUE}
 # get variable descriptions
 # hu <- key %>%
 #   dplyr::filter(
@@ -565,7 +563,13 @@ Haha...
 
 # manually identify variables, that are directly linked to AREA
 bad_vars <- c("density", "packinx", "prindx", "lden", "lpackinx")
+```
 
+Das Modell, das aus diesem Algorithmus hervorgeht, erscheint im ersten Moment äußert vielversprechend. Abbildung \ref{fig:model2_plot} zeigt, dass es äußerst präzise Vorhersagen für LAREA erlaubt und -- abgesehen von wenigen, starken Ausreißern -- die Mehrzahl der Beobachtungen hervorragend erklärt. Ein Blick in Tabelle \ref{tab:model2_result} offenbart jedoch, dass das Modell im wesentlichen auf den beiden Variablen *lnpop* und *lpackinx* beruht. Die anderen Variablen haben verschwindend wenig Einfluss auf das Ergebnis. *packinx* ist eine umskalierte Variante der Bevölkerungsdichte ^[@binford_constructing_2001, 117.], die sich selbst als abhängige Größe aus Bevölkerungszahl und Arealgröße definiert. Es ist also nicht verwunderlich, dass sich die logarithmisch skalierte Variante *lpackinx* gut zur Vorhersage von *larea* eignet. Um ein Ergebnis zu erhalten, dass tatsächlich wissenschaftliche Relevanz besitzt, muss ich jene Variablen aus dem Ausgangsdatensatz entfernen, die direkt an von der Arealgröße abhängig sind. Eine kurze Durchsicht der Schlüsseldatei LRBkey reduziert auf die Auswahl metrisch skalierter Variablen, die ich oben getroffen habe, ergab dazu folgende Auswahl: `r paste(bad_vars, collapse = ", ")`. Freilich könnte man argumentieren, dass auch die Beziehung zwischen *larea* und der logarithmisch skalierten Bevölkerungszahl *lnpop*, die in Tabelle \ref{tab:model2_result} ebenfalls deutlich als relevante Vorhersagegröße angeführt wird, trivial ist und entsprechend ausgeschlossen werden könnte. Das führt allerdings zu einer fortgeschrittenen, manuellen Variablenvorauswahl. Eine solche kann Fragestellungsbezogen durchaus sinnvoll sein, wurde hier aber bewusst vermieden. Die Abwesenheit von *lpackinx* und *lnpop* in Binfords Ergebnismodell (siehe \ref{eq:area_multi_log}) spricht dafür, dass Binford eine solche getroffen hat, ohne das explizit zu kommunizieren. Darauf soll unten noch einmal eingegangen werden.
+
+Zunächst nun also ein Blick auf das Modell, das sich ergibt, wenn man die beschriebene Variablenvorauswahl trifft und noch einmal die Arbeitschritte des `stepAIC()`- und `dropterm()`-Algorithmus wiederholt.
+
+```{r final model, cache=TRUE, dependson="bad variables"}
 # remove those variables
 sel5 <- sel3 %>%
   dplyr::select(
@@ -610,7 +614,7 @@ for (i in 1:to_drop) {
 }
 ```
 
-```{r plot model4, warning=FALSE, cache=TRUE, dependson="dropterm loop", fig.height=7, fig.cap="\\label{fig:model2_plot}Diagnostische Plots für das finale Modell ...."}
+```{r plot model4, warning=FALSE, cache=TRUE, dependson="dropterm loop", fig.height=7, fig.cap="\\label{fig:model2_plot}Diagnostische Plots für das finale Modell."}
 opar <- par(mfrow=c(2,2)) 
 plot(model4)
 par(opar) 
@@ -665,6 +669,28 @@ fin_mod_vals %>%
   kableExtra::column_spec(3, bold = TRUE)
 ```
 
-## Vergleich der Ergebnismodelle
+\begin{equation} \label{eq:area_final}
+\begin{aligned}
+\log _{10} \mathit{area} = \\
+\mathit{larea} = \\
+    & 2.439 + \\ 
+    & (-0.021 * \mathit{temp}) + \\
+    & (-0.132 * \mathit{medstab}) + \\
+    & (0.259 * \mathit{perwret}) + \\
+    & (-0.498 * \mathit{perwltg}) + \\
+    & (-0.760 * \mathit{lnagp}) + \\
+    & (0.372 * \mathit{lnpop}) + \\
+    & (0.005 * \mathit{gatherin}) + \\
+    & (0.001 * \mathit{kmov}) + \\
+    & (-0.002 * \mathit{nicheff}) + \\
+    & (-0.006 * \mathit{lati})
+\end{aligned}
+\end{equation}
+
+Aus Tabelle \ref{final model estimate table} (und Gleichung \ref{eq:area_final}) wird ersichtlich, dass dieses Modell nun auf einer wesentlich diverseren Auswahl unabhängiger Variablen fußt. Abbildung \ref{plot model4} und Tabelle \ref{final model estimate table 2} belegen jedoch, dass es sich um ein solides Modell handelt. Den Kennwerten in Tabelle \ref{binford model estimate table 2} nach zu urteilen, scheint es wesentlich bessere Vorhersagen zu treffen als Binfords Modell. Ich möchte damit also den Reproduktionsversuch abschließen und die Ergebnisse diskutieren.
+
+## Diskussion
+
+Ziehen-ohne-zurückzulegen
 
 Vergleichen wir nun also kurz
