@@ -7,7 +7,7 @@ header-includes:
 - \usepackage{fancyhdr}
 - \pagestyle{fancy}
 - \usepackage[font=small,labelfont=bf]{caption}
-- \usepackage[german]{babel}
+- \usepackage[ngerman]{babel}
 output: 
   pdf_document:
     pandoc_args: [
