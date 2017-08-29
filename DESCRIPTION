@@ -13,6 +13,7 @@ Imports:
     ggplot2 (>= 2.2.1),
     magrittr (>= 1.5),
     tidyverse (>= 1.1.1),
+    binford (>= 0.1.0),
     broom (>= 0.4.2),
     cowplot (>= 0.8.0),
     dplyr (>= 0.7.2),
