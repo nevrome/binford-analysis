@@ -15,8 +15,11 @@ repos:
 #    - ttf-mscorefonts-installer
     
 before_script:
+    # install microsoft fonts
     - echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | sudo debconf-set-selections
     - sudo apt-get install ttf-mscorefonts-installer
+    # install tex german language package
+    - sudo apt-get install texlive-lang-german
     # rebuild font cache
     - sudo fc-cache
     
