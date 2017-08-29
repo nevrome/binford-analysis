@@ -3,3 +3,4 @@
 ^report$
 ^playground$
 ^data-raw$
+^\.travis\.yml$
