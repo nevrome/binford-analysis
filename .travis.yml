@@ -3,6 +3,23 @@
 language: R
 sudo: false
 cache: packages
+
+# take packages from MRAN snapshot
+repos:
+  MRAN: "https://mran.microsoft.com/snapshot/2017-08-29"
+
+addons:
+  apt:
+    packages:
+    # install microsoft fonts
+    - ttf-mscorefonts-installer
+    
+before_script:
+    # rebuild font cache
+    - sudo fc-cache
+    
 script:
+  # install package
   - Rscript -e "devtools::install()"
+  # render document
   - Rscript -e "rmarkdown::render('report/binford_main.Rmd')"
