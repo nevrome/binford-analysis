@@ -614,7 +614,7 @@ for (i in 1:to_drop) {
 }
 ```
 
-```{r plot model4, warning=FALSE, cache=TRUE, dependson="dropterm loop", fig.height=7, fig.cap="\\label{fig:model2_plot}Diagnostische Plots für das finale Modell."}
+```{r plot model4, warning=FALSE, cache=TRUE, dependson="dropterm loop", fig.height=7, fig.cap="\\label{fig:model4_plot}Diagnostische Plots für das finale Modell."}
 opar <- par(mfrow=c(2,2)) 
 plot(model4)
 par(opar) 
@@ -687,10 +687,7 @@ fin_mod_vals %>%
 \end{aligned}
 \end{equation}
 
-Aus Tabelle \ref{final model estimate table} (und Gleichung \ref{eq:area_final}) wird ersichtlich, dass dieses Modell nun auf einer wesentlich diverseren Auswahl unabhängiger Variablen fußt. Abbildung \ref{plot model4} und Tabelle \ref{final model estimate table 2} belegen jedoch, dass es sich um ein solides Modell handelt. Den Kennwerten in Tabelle \ref{binford model estimate table 2} nach zu urteilen, scheint es wesentlich bessere Vorhersagen zu treffen als Binfords Modell. Ich möchte damit also den Reproduktionsversuch abschließen und die Ergebnisse diskutieren.
+Aus Tabelle \ref{tab:model4_result} (und Gleichung \ref{eq:area_final}) wird ersichtlich, dass dieses Modell nun auf einer wesentlich diverseren Auswahl unabhängiger Variablen fußt. Abbildung \ref{fig:model4_plot} und Tabelle \ref{tab:model4_result_2} belegen jedoch, dass es sich um ein solides Modell handelt. Den Kennwerten in Tabelle \ref{tab:binford_model_result_2} nach zu urteilen, scheint es wesentlich bessere Vorhersagen zu treffen als Binfords Modell. Ich möchte damit also den Reproduktionsversuch abschließen und die Ergebnisse diskutieren.
 
-## Diskussion
-
-Ziehen-ohne-zurückzulegen
-
-Vergleichen wir nun also kurz
+```{r child = 'binford_discussion.Rmd'}
+```
