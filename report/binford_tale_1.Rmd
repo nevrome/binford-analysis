@@ -50,40 +50,40 @@ Das Beispiel konzentiert sich auf die Variable area -- die Größe des Areals, d
 ```{r table of variables in binfords model}
 # create table data
 tibble::tribble(
-  ~colA,  ~colB, ~Einheit,
-  "area", "Größe des Areals, das von einer Jäger- und Sammlergruppe relativ exklusiv genutzt wird", "100km²",
-  "larea", "siehe area", "log10(100km²)",
-  "lbio5", "Primäre (pflanzliche) Biomasse", "log(kg/m^2)",
-  "lcoklm", "Distanz zur nächstgelegenen, marinen Küste", "log10(km)", 
-  "gatherin", "", "",
-  "hunting", "Ernährungsanteil tierischer, terrestrischer Ressourcen", "%", 
-  "kmov", "", "",
-  "lati", "", "",
-  "rlow", "Niederschlagsmenge im trockensten Monat des Jahres", "Millimeter", 
-  "medstab", "", "",
-  "lnagp", "", "",
-  "nicheff", "", "",
-  "lnpop", "", "",
-  "perwret", "", "",
-  "perwltg", "Anteil des Wachstumszeitraum in der die Wasserverfügbarkeit unter dem pflanzlichen Welkepunkt liegt", "%", 
-  "rungrc", "Anzahl der Monate im Wachstumszeitraum in denen der RUNOFF-Wert > 0", "Anzahl",
-  "lrunoff", "Wasser, das durch Abfluss für die Nutzung durch Pflanzen verloren geht, ", "log(mm)", 
-  "sdtemp", "Standardabweichung der mittleren Monatstemperatur", "keine Einheit",
-  "temp", "", "",
-  "watrgrc", "Anzahl der Monate im Wachstumszeitraum, in denen Wasser im Boden gespeichert bleibt", "Anzahl"
+  ~colA,  ~Beschreibung, ~Einheit, ~Referenz,
+  "area", "Größe des Areals, das von einer Jäger- und Sammlergruppe relativ exklusiv genutzt wird", "100km²", "117",
+  "larea", "siehe area", "log10(100km²)", "",
+  "lbio5", "Primäre (pflanzliche) Biomasse", "log(kg/m^2)", "85",
+  "lcoklm", "Distanz zur nächstgelegenen, marinen Küste", "log10(km)", "154",
+  "gatherin", "Ernährungsanteil pflanzlicher, terrestrischer Ressourcen", "%","117",
+  "hunting", "Ernährungsanteil tierischer, terrestrischer Ressourcen", "%", "117",
+  "kmov", "Summe der Distanz, die eine durchschnittliche Familieneinheit in einem Jahr zurücklegt", "km/yr", "117",
+  "lati", "Breitengrad aus einer Idealkugelprojektion (rectifying latitude)", "°", "",
+  "rlow", "Niederschlagsmenge im trockensten Monat des Jahres", "Millimeter", "70",
+  "medstab", "Indikatorgröße für die Ähnlichkeit zu mediterranem Klima berechnet aus Proxies zu Temperatur und Niederschlag", "keine Einheit", "72",
+  "lnagp", "Net above-ground productivity -- Zuwachs der Biomasse in einem Habitat durch Photosynthese und Wachstum", "g/m^2/yr", "79", 
+  "nicheff", "Niche effectiveness -- Verhältnis der tatsächlichen Bevölkerungsdichte zu einer modellbasierten Vorhersage der Bevölkerungsdichte, die Binford in Kapitel 10 formuliert", "keine Einheit", "373",
+  "lnpop", "Größe der untersuchten Bevölkerung", "log(Anzahl)", "117",
+  "perwret", "Anteil des Wachstumszeitraum in dem der Boden Wasser gespeichert vorhält", "%", "79",
+  "perwltg", "Anteil des Wachstumszeitraum in dem die Wasserverfügbarkeit unter dem pflanzlichen Welkepunkt liegt", "%", "79", 
+  "rungrc", "Anzahl der Monate im Wachstumszeitraum in denen der RUNOFF-Wert > 0", "Anzahl", "79",
+  "lrunoff", "Wasser, das durch Abfluss für die Nutzung durch Pflanzen verloren geht, ", "log(mm)", "79",
+  "sdtemp", "Standardabweichung der mittleren Monatstemperatur", "keine Einheit", "70",
+  "temp", "Temperateness -- Indikatorgröße für die Ausgeglichenheit der Monatstemperatur", "keine Einheit", "59",
+  "watrgrc", "Anzahl der Monate im Wachstumszeitraum, in denen Wasser im Boden gespeichert bleibt", "Anzahl", ""
 ) %>%
     dplyr::rename(
-    " " = "colA",
-    "Beschreibung" = "colB"
+    " " = "colA"
   ) %>%
   # table setup and settings
   knitr::kable(
     format = "latex",
-    caption = "\\label{tab:variable_description_1}Kurzbeschreibung der Variablen in Binfords Ergebnismodell.",
+    caption = "\\label{tab:variable_description_1}Kurzbeschreibung der Variablen in Binfords Ergebnismodell und dem von mir erarbeiteten, finalen Modell. Die Spalte Referenz enthält die Seitenzahl, wo die jeweilige Variable eingeführt wird.",
     booktabs = T
   ) %>%
   kableExtra::column_spec(1, bold = TRUE) %>%
-  kableExtra::column_spec(2, width = "16em")
+  kableExtra::column_spec(2, width = "14em") %>%
+  kableExtra::kable_styling(font_size = 9)
 ```
 
 Binford hat seine Analyse in SPSS (Version 6.1.2) ausgeführt. Ein Skriptprotokoll der Analysesession liegt mir nicht vor. Um die Ergebnis in Form der Modellgleichung zu reproduzieren, werde ich nun also zunächst versuchen, das Vorgehen so gut wie möglich nachzuvollziehen. Dafür steht mir eine hoffentlich gleiche oder zumindest hochgradig ähnliche Version des oben beschriebene Gruppendatensatz zu Verfügung. Ich weiß weiterhin, dass Binford sein Modell mittels der Methode schrittweiser, Multipler Regression ermittelt hat. Unabhängige Variablen, die sich kollinear zu anderen unabhägigen Variablen verhalten, hat er entfernt. Die abschließende Entscheidung über das beste Modell gibt er an unter Beachtung von den Indikatorgrößen $R^2$ und Standardfehler getroffen zu haben. 
@@ -102,7 +102,7 @@ main <- binford::LRB
 
 ```{r variable type example table, cache=TRUE}
 # create random subset of key table
-key[250:258, ] %>%
+key[250:262, ] %>%
   # select showvars
   dplyr::select(variable, description, type, type_exp) %>%
   # add decorative ... at the beginning and end
@@ -118,7 +118,8 @@ key[250:258, ] %>%
     booktabs = T
   ) %>%
   kableExtra::column_spec(1, bold = TRUE) %>%
-  kableExtra::column_spec(2, width = "10em")
+  kableExtra::column_spec(2, width = "14em") %>%
+  kableExtra::kable_styling(font_size = 9)
 ```
 
 ```{r type classification distribution plot, cache=TRUE, fig.cap="\\label{fig:level_of_meas_bar}Verteilung der Skalenniveauzuordung in den Variablen *type* und *type_exp* des Metatdatensatzes. *type_exp* habe ich hinzugefügt, um Variablen automatisiert nach ihrer Skalenniveauzuordnung auswählen zu können. Die Klassenzuordnung in *type* ist farblich auf *type_exp* abgetragen."}
