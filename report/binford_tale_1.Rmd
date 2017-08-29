@@ -269,7 +269,7 @@ In einem letzten Schritt muss nun noch die Variable *area* durch die Variable *l
 \end{equation}
 
 ```{r}
-# replace   
+# replace area with larea  
 sel3 <- sel2 %>%
   dplyr::rename(
     "larea" = "area"
@@ -293,6 +293,7 @@ binford_model <- lm(
 ```
 
 ```{r binford model estimate table, cache=TRUE, dependson="recreate binford model"}
+# create nice data.frame with model coefficent information
 var_vals <- binford_model %>%
   broom::tidy() %>%
   dplyr::mutate_if(
@@ -303,6 +304,7 @@ var_vals <- binford_model %>%
     " " = "term"
   )
 
+# prepare output table with extensiv description
 var_vals %>%
   knitr::kable(
     format = "latex",
@@ -317,6 +319,7 @@ var_vals %>%
   {[}23.8.2017{]}}
 
 ```{r binford model estimate table 2, cache=TRUE, dependson="recreate binford model"}
+# create nice data.frame with model quality information
 mod_vals <- binford_model %>%
   broom::glance() %>%
   tidyr::gather(var, value) %>% 
@@ -324,7 +327,7 @@ mod_vals <- binford_model %>%
     var2 = c(var[7:11], rep(NA, 6)),
     value2 = c(value[7:11], rep(NA, 6))
   ) %>%
-  # df entfällt so
+  # value df is removed like this - is useless here anyway
   magrittr::extract(1:5,) %>%
   dplyr::mutate_if(
     is.numeric,
@@ -339,8 +342,10 @@ mod_vals <- binford_model %>%
     "value" = "value2"
   )
 
+# vestige from when there were two empty cells due to magrittr::extract(1:6,)
 mod_vals[is.na(mod_vals)] <- ""
 
+# prepare output table with extensiv description
 mod_vals %>%
   knitr::kable(
     format = "latex",
@@ -354,6 +359,7 @@ mod_vals %>%
 \footnotetext{ebenda}
 
 ```{r plot binford model, warning=FALSE, cache=TRUE, dependson="recreate binford model", fig.height=7, fig.cap="\\label{fig:binford_model_plot}Diagnostische Plots für das mit Binfords Variablenauswahl reproduzierte Modell. \\newline \\textbf{Residuals vs Fitted:} Streuung der Residuen in Abhängigkeit von der Modellvorhersage. Kann als Indikator für nicht lineare Trends dienen. \\newline \\textbf{Normal Q-Q:} Sortierte Residuenwerte abgetragen auf die theoretischen Quantile einer Normalverteilung. Zeigt, inwiefern die Residuenverteilung der Normalverteilung entspricht. \\newline \\textbf{Scale-Location:} Vergleiche Residuals vs Fitted. Die Umskalierung erlaubt es, die Homogenität der Residuenvarianz (Homoskedastizität) besser zu beurteilen.  \\newline \\textbf{Residuals vs Leverage:} Standardisierte Residuenwerte abgetragen auf ein Maß zur Einschätzung des Einflusses auf das Modellergebnis. Dient zum Identifizieren von einflussreichen Ausreißern. ^[Zum Verständnis der diagnostischen Plots: http://data.library.virginia.edu/diagnostic-plots [16.8.2017]]"}
+# diagnostic plots
 opar <- par(mfrow=c(2,2)) 
 plot(binford_model)
 par(opar) 
@@ -428,7 +434,7 @@ Entsprechend nun also ein erster Durchlauf der automatischen, schrittweisen Mode
 ```{r stepwise multiple regression, cache=TRUE, dependson="create initial model", message=FALSE, echo=TRUE}
 model1 <- MASS::stepAIC(
   initial_model, 
-  # don't show intermediate steps
+  # trace option: don't show intermediate steps
   trace = FALSE
 )
 ```
@@ -440,6 +446,7 @@ par(opar)
 ```
 
 ```{r anova table of stepAIC, cache=TRUE, dependson="stepwise multiple regression"}
+# nice output table of stepAIC() steps 
 model1$anova %>% as.data.frame() %>% dplyr::rename("Dev" = "Deviance") %>% 
   dplyr::select(-Df) %>% 
   knitr::kable(
@@ -468,6 +475,7 @@ MASS::dropterm(model1, test = "F")
 Tabelle \ref{tab:dropterm_example} gibt Einblick in die Prüfgrößen, die `dropterm(test = "F")` berechnet. Offensichtlich verändert sich die Modellgüte je nach dem, welche Variablen entfernt werden. Große Werte für *Pr(F)* deuten auf Variablen hin, die entfernt werden sollten^[@venables_modern_2002, 176.]. 
 
 ```{r dropterm example table, cache=TRUE, cache=TRUE, dependson="stepwise multiple regression"}
+# nice output table of one dropterm() step
 MASS::dropterm(model1, test = "F") %>%
   as.data.frame() %>%
   magrittr::extract(1:40, ) %>%

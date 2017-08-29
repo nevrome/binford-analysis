@@ -14,20 +14,24 @@ csl: deutsches-archaologisches-institut.csl
 
 ## Diskussion
 
-```{r binford individual variable plots, cache=TRUE, message=FALSE, warning=FALSE, fig.height=17, fig.cap="\\label{fig:binford_indi_plots}Bivariate Relationen der abhängigen Variable *larea* und allen unabhängigen Variablen in Binfords Ergebnismodell."}
+```{r binford individual variable plots, cache=TRUE, message=FALSE, warning=FALSE, fig.height=17, fig.cap="\\label{fig:binford_indi_plots}Bivariate Relationen der abhängigen Variable *larea* und allen unabhängigen Variablen in Binfords Ergebnismodell. Mit angegeben ist der Koeffizient der jeweiligen Variable auf fünf Nachkommastellen gerundet."}
+# binford variable selection
 binford_selection <- c(
   "hunting", "lbio5", "lcoklm", 
   "lrunoff", "watrgrc", "medstab", "perwltg",
   "rlow", "rungrc", "sdtemp"
 )
 
+# extract coefficients into vector
 binford_coeffi <- coefficients(binford_model)
 #binford_intercept <- binford_coeffi[1]
 
+# create df only with selection
 sel6 <- sel3 %>% dplyr::select(
   binford_selection
 ) 
 
+# loop to create all scatterplots of larea with the independent variables
 binford_indi_plots <- lapply(
   seq_along(sel6),
   function(x){
@@ -39,10 +43,11 @@ binford_indi_plots <- lapply(
   }
 )
 
+# merge individual plots to big figure (plot matrix)
 cowplot::plot_grid(plotlist = binford_indi_plots, ncol = 2)
 ```
 
-```{r final individual variable plots, cache=TRUE, message=FALSE, warning=FALSE, fig.height=17, fig.cap="\\label{fig:final_indi_plots}Bivariate Relationen der abhängigen Variable *larea* und allen unabhängigen Variablen in meinem finalen Ergebnismodell."}
+```{r final individual variable plots, cache=TRUE, message=FALSE, warning=FALSE, fig.height=17, fig.cap="\\label{fig:final_indi_plots}Bivariate Relationen der abhängigen Variable *larea* und allen unabhängigen Variablen in meinem finalen Ergebnismodell. Mit angegeben ist der Koeffizient der jeweiligen Variable auf fünf Nachkommastellen gerundet."}
 final_selection <- c(
   "temp", "medstab", "perwret", 
   "perwltg", "lnagp", "lnpop", "gatherin",
