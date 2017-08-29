@@ -14,20 +14,6 @@ csl: deutsches-archaologisches-institut.csl
 
 ## Diskussion
 
-Binford ist zuversichtlich, mit Gleichung \ref{eq:area_final} ein sinnvolles und relevantes Modell formuliert zu haben. Das Narrativ, das er zu seiner Erklärung konstruiert, entbehrt allerdings noch jener axiomatischen Schlüsse, die er im weiteren Verlauf des Buches generiert: Die Variablen *hunting* und *lcoklm* (siehe Tabelle \ref{tab:variable_description_1}) sind negativ mit einer Abhängigkeit von marinen Ressourcen und positiv mit einer Abhängigkeit von landgebundenem Jagdwild verknüpft. Man kann nun schließen, dass die Nutzung terrestrischer Nahrungsquellen größere Streifgebiete für die Jäger- und Sammlergruppen erfordert. Damit wären *hunting* und *lcoklm* Anzeiger für die Arealgröße. Die primäre Biomasse, die in der Variablen *lbio5* gemessen wird, erhöht sich mit der Niederschlagsmenge. Niederschlagsüberschuss, wie er sich in *lrunoff* abbildet, ist ein Indikator für ausreichende Wasserverfügbarkeit. Hohe Werte von *lbio5* und *lrunoff* sind damit Anzeiger für eine Umgebung, in der Jäger- und Sammlergruppen sich aufgrund der hohen Dichte verfügbarer Biomasse aus nur kleinen Arealen versorgen können. Im diesem Kontext lässt sich auch die Negativkorrelation von *larea* mit *medstab* und *perwltg* verstehen. Wasserverfügbarkeit ist essentiell für Aufbau und stabile Verfügbarkeit von Biomasse und erlaubt kleinere Streifgebiete. Stabilität drückt sich auch in einer kleinen Standardabweichung der Monatstemperatur *sdtemp* aus. Höhere Werte der Niederschlagsgebundenen Variablen *watrgrc* und *rlow* deuten darauf hin, dass es im Untersuchungsareal keine echte, jahreszeitliche Trockenphase gibt.     
-
-> The factors that appear correlated with small ethnic areas are the presence of marine coasts in the region, high plant biomass, and environmental stability in seasonality of temperature and rainfall variability. When these factors all have negative values indicating opposite conditions, large ethnic areas are unlikely.   
->
-> @binford_constructing_2001, 155.
-
-
-    
-
-
-Ziehen-ohne-zurückzulegen
-
-Vergleichen wir nun also kurz \ref{eq:area_final}
-
 ```{r binford individual variable plots, cache=TRUE, message=FALSE, warning=FALSE, fig.height=17, fig.cap="\\label{fig:binford_indi_plots}Bivariate Relationen der abhängigen Variable *larea* und allen unabhängigen Variablen in Binfords Ergebnismodell."}
 binford_selection <- c(
   "hunting", "lbio5", "lcoklm", 
@@ -82,3 +68,25 @@ final_indi_plots <- lapply(
 
 cowplot::plot_grid(plotlist = final_indi_plots, ncol = 2)
 ```
+
+Binford ist zuversichtlich, mit Gleichung \ref{eq:area_final} ein sinnvolles und relevantes Modell formuliert zu haben. Das Narrativ, das er zu seiner Erklärung konstruiert, entbehrt allerdings noch jener axiomatischen Schlüsse, die er im weiteren Verlauf des Buches generieren wird. Ich möchte seine Schlüsse kurz wiedergeben (siehe dazu Abbildung \ref{fig:binford_indi_plots}):
+
+Die Variablen *hunting* und *lcoklm* (siehe Tabelle \ref{tab:variable_description_1}) sind negativ mit einer Abhängigkeit von marinen Ressourcen und positiv mit einer Abhängigkeit von landgebundenem Jagdwild verknüpft. Man kann nun schließen, dass die Nutzung terrestrischer Nahrungsquellen größere Streifgebiete für die Jäger- und Sammlergruppen erfordert. Damit wären *hunting* und *lcoklm* Anzeiger für die Arealgröße. Die primäre Biomasse, die in der Variablen *lbio5* gemessen wird, erhöht sich mit der Niederschlagsmenge. Niederschlagsüberschuss, wie er sich in *lrunoff* und *rungrc* abbildet, ist ein Indikator für ausreichende Wasserverfügbarkeit. Hohe Werte von *lbio5*, *lrunoff* und *rungrc* sind damit Anzeiger für eine Umgebung, in der Jäger- und Sammlergruppen sich aufgrund der hohen Dichte verfügbarer Biomasse aus nur kleinen Arealen versorgen können. Im diesem Kontext lässt sich auch die Negativkorrelation von *larea* mit *medstab* und *perwltg* verstehen. Wasserverfügbarkeit ist essentiell für Aufbau und stabile Verfügbarkeit von Biomasse und erlaubt kleinere Streifgebiete. Stabilität drückt sich auch in einer kleinen Standardabweichung der Monatstemperatur *sdtemp* aus. Höhere Werte der Niederschlagsgebundenen Variablen *watrgrc* und *rlow* deuten darauf hin, dass es im Untersuchungsareal keine echte, jahreszeitliche Trockenphase gibt.     
+
+> The factors that appear correlated with small ethnic areas are the presence of marine coasts in the region, high plant biomass, and environmental stability in seasonality of temperature and rainfall variability. When these factors all have negative values indicating opposite conditions, large ethnic areas are unlikely.   
+>
+> @binford_constructing_2001, 155.
+
+Die von mir entwickelte Modellgleichung \ref{eq:area_final} erlaubt ebenfalls einen solchen Interpretationsversuch. Die Variablen *medstab* und *perwltg* finden auch in diesem Modell mit in Vorzeichen und Größenordnung gleichem Koeffizienten Berücksichtigung. Die von Binford forgeschlagene, kausale Deutung lässt sich auch hier zur Anwendung bringen und die Variablen *temp*, *perwret* und *lnagp* passen gut in dieses Narrativ. Es liegt auf der Hand, inwiefern *lnpop* und *kmov* eine Vorhersage der Arealgröße von Jäger- und Sammlergruppen erlauben. Abbildung \ref{fig:final_indi_plots} legt nahe, dass diese beiden Variablen nicht geringen Anteil an der erhöhten Güte dieses Modells gegenüber dem von Binford haben. Die negative Korrelation mit *lati* überrascht zunächst, da auf der Nordhalbkugel mehr Landfläche zur Verfügung steht. Ein genauerer Blick auf den arithmetischen Mittelwert der Variable (`r round(mean(sel3$lati), 2)`) eröffnet allerdings die Perspektive, dass ein Überwiegender Teil der in die Analyse aufgenommenen Gruppen eben von der Nordhalbkugel stammt und *lati* dadurch als Indikator für Äquatornähe zu verstehen ist. Binford hat diesen Zusammenhang ebenfalls beobachtet:
+
+> In both graphs [figure 5.14], hunter-gatherer cases occupying small ethnic areas are clustered in low latitudes that are characterized by high plant productivity. 
+> 
+> @binford_constructing_2001, 155.
+
+Die Bedeutung von *nicheff* erschließt sich mir im Kontext meines Modells nicht.
+
+
+
+Ziehen-ohne-zurückzulegen
+
+
