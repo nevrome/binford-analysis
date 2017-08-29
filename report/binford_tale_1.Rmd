@@ -28,22 +28,22 @@ Im 5. Kapitel "Designing Frames of Reference and Exploring Projections" beschrei
 > 
 > -- @binford_constructing_2001, 154.
 
-Das Beispiel konzentiert sich auf die Variable AREA -- die Größe des Areals, das von einer Jäger- und Sammlergruppe relativ exklusiv genutzt wird gemessen in Vielfachen von 100km². Mittels multipler Regression auf Grundlage des Gruppendatensatzes kommt Binford zu folgender Gleichung \ref{eq:area_multi} (bzw. umgeformt Gleichung \ref{eq:area_multi_log}), die die abhängige Variable AREA in Relation zu mehreren unabhängigen Variablen (siehe Tabelle \ref{tab:variable_description_1}) beschreibt:
+Das Beispiel konzentiert sich auf die Variable area -- die Größe des Areals, das von einer Jäger- und Sammlergruppe relativ exklusiv genutzt wird gemessen in Vielfachen von 100km². Mittels multipler Regression auf Grundlage des Gruppendatensatzes kommt Binford zu folgender Gleichung \ref{eq:area_multi} (bzw. umgeformt Gleichung \ref{eq:area_multi_log}), die die abhängige Variable *area* in Relation zu mehreren unabhängigen Variablen (siehe Tabelle \ref{tab:variable_description_1}) beschreibt:
 
 \begin{equation} \label{eq:area_multi}
 \begin{aligned}
-\mathit{AREA} = \\
+\mathit{area} = \\
     & 10 \mathbin{\char`\^} [3.421431 + \\ 
-    & (0.004732 * \mathit{HUNTING}) + \\
-    & (-0.387229 * \mathit{LBIO5}) + \\
-    & (0.186574 * \mathit{LCOKLM}) + \\
-    & (-0.110286 * \mathit{LRUNOFF}) + \\
-    & (0.175157 * \mathit{WATRGRC}) + \\
-    & (-0.164604 * \mathit{MEDSTAB}) + \\
-    & (-0.743144 * \mathit{PERWLTG}) + \\
-    & (0.004706 * \mathit{RLOW}) + \\
-    & (-0.080339 * \mathit{RUNGRC}) + \\
-    & (0.024755 * \mathit{SDTEMP})]
+    & (0.004732 * \mathit{hunting}) + \\
+    & (-0.387229 * \mathit{lbio5}) + \\
+    & (0.186574 * \mathit{lcoklm}) + \\
+    & (-0.110286 * \mathit{lrunoff}) + \\
+    & (0.175157 * \mathit{watrgrc}) + \\
+    & (-0.164604 * \mathit{medstab}) + \\
+    & (-0.743144 * \mathit{perwltg}) + \\
+    & (0.004706 * \mathit{rlow}) + \\
+    & (-0.080339 * \mathit{rungrc}) + \\
+    & (0.024755 * \mathit{sdtemp})]
 \end{aligned}
 \end{equation}
 
@@ -51,17 +51,26 @@ Das Beispiel konzentiert sich auf die Variable AREA -- die Größe des Areals, d
 # create table data
 tibble::tribble(
   ~colA,  ~colB, ~Einheit,
-  "AREA", "Größe des Areals, das von einer Jäger- und Sammlergruppe relativ exklusiv genutzt wird", "100km²",
-  "LAREA", "siehe AREA", "log10(100km²)",
-  "HUNTING", "Ernährungsanteil tierischer, terrestrischer Ressourcen", "%", 
-  "LBIO5", "Primäre (pflanzliche) Biomasse", "log(kg/m^2)",
-  "LCOKLM", "Distanz zur nächstgelegenen, marinen Küste", "log10(km)", 
-  "LRUNOFF", "Wasser, das durch Abfluss für die Nutzung durch Pflanzen verloren geht, ", "log(mm)", 
-  "WATRGRC", "Anzahl der Monate im Wachstumszeitraum, in denen Wasser im Boden gespeichert bleibt", "Anzahl", 
-  "PERWLTG", "Anteil des Wachstumszeitraum in der die Wasserverfügbarkeit unter dem pflanzlichen Welkepunkt liegt", "%", 
-  "RLOW", "Niederschlagsmenge im trockensten Monat des Jahres", "Millimeter", 
-  "RUNGRC", "Anzahl der Monate im Wachstumszeitraum in denen der RUNOFF-Wert > 0", "Anzahl",
-  "SDTEMP", "Standardabweichung der mittleren Monatstemperatur", "keine Einheit"
+  "area", "Größe des Areals, das von einer Jäger- und Sammlergruppe relativ exklusiv genutzt wird", "100km²",
+  "larea", "siehe area", "log10(100km²)",
+  "lbio5", "Primäre (pflanzliche) Biomasse", "log(kg/m^2)",
+  "lcoklm", "Distanz zur nächstgelegenen, marinen Küste", "log10(km)", 
+  "gatherin", "", "",
+  "hunting", "Ernährungsanteil tierischer, terrestrischer Ressourcen", "%", 
+  "kmov", "", "",
+  "lati", "", "",
+  "rlow", "Niederschlagsmenge im trockensten Monat des Jahres", "Millimeter", 
+  "medstab", "", "",
+  "lnagp", "", "",
+  "nicheff", "", "",
+  "lnpop", "", "",
+  "perwret", "", "",
+  "perwltg", "Anteil des Wachstumszeitraum in der die Wasserverfügbarkeit unter dem pflanzlichen Welkepunkt liegt", "%", 
+  "rungrc", "Anzahl der Monate im Wachstumszeitraum in denen der RUNOFF-Wert > 0", "Anzahl",
+  "lrunoff", "Wasser, das durch Abfluss für die Nutzung durch Pflanzen verloren geht, ", "log(mm)", 
+  "sdtemp", "Standardabweichung der mittleren Monatstemperatur", "keine Einheit",
+  "temp", "", "",
+  "watrgrc", "Anzahl der Monate im Wachstumszeitraum, in denen Wasser im Boden gespeichert bleibt", "Anzahl"
 ) %>%
     dplyr::rename(
     " " = "colA",
@@ -238,23 +247,23 @@ sel2 <- sel1 %>%
 
 Immerhin `r without_na` der `r ncol(sel1)` ($\approx$ `r without_na_percent`%) Variablen besitzen allerdings überhaupt keine Lehrstellen. Der Datensatz ist bemerkenswert vollständig. Ich habe mich entschieden, alle `r nrow(na_vars_part)` Variablen, bei denen mehr als `r paste(MASS::fractions(na_vars_removal_threshold))` der Werte fehlen aus der Analyse auszuschließen, um Problemen bei der Regressionsanalyse vorzubeugen. In Abbildung \ref{fig:is_na_bar} ist die Demarkationslinie rot eingetragen. Bei den gruppenbezogenen Beobachtungen ist das Bild insgesamt ausgeglichener: Für alle Gruppen liegt eine große Menge an Werten vor. Hier sind keine Änderungen erforderlich.
 
-In einem letzten Schritt muss nun noch die Variable AREA durch die Variable LAREA ausgetauscht werden. Binford gibt im Buch zwar die Modellergebnisgleichung für AREA an, das errechnete Modell bezieht sich aber auf den Logarithmus zur Basis 10 von AREA (siehe Umformung von Gleichung \ref{eq:area_multi} zu \ref{eq:area_multi_log}). Der Ergebnisdatensatz wird im folgenden als `sel3` bezeichnet. 
+In einem letzten Schritt muss nun noch die Variable *area* durch die Variable *larea* ausgetauscht werden. Binford gibt im Buch zwar die Modellergebnisgleichung für *area* an, das errechnete Modell bezieht sich aber auf den Logarithmus zur Basis 10 von *area* (siehe Umformung von Gleichung \ref{eq:area_multi} zu \ref{eq:area_multi_log}). Der Ergebnisdatensatz wird im folgenden als `sel3` bezeichnet. 
 
 \begin{equation} \label{eq:area_multi_log}
 \begin{aligned}
-\log _{10} \mathit{AREA} = \\
-\mathit{LAREA} = \\
+\log _{10} \mathit{area} = \\
+\mathit{larea} = \\
     & 3.421431 + \\ 
-    & (0.004732 * \mathit{HUNTING}) + \\
-    & (-0.387229 * \mathit{LBIO5}) + \\
-    & (0.186574 * \mathit{LCOKLM}) + \\
-    & (-0.110286 * \mathit{LRUNOFF}) + \\
-    & (0.175157 * \mathit{WATRGRC}) + \\
-    & (-0.164604 * \mathit{MEDSTAB}) + \\
-    & (-0.743144 * \mathit{PERWLTG}) + \\
-    & (0.004706 * \mathit{RLOW}) + \\
-    & (-0.080339 * \mathit{RUNGRC}) + \\
-    & (0.024755 * \mathit{SDTEMP})
+    & (0.004732 * \mathit{hunting}) + \\
+    & (-0.387229 * \mathit{lbio5}) + \\
+    & (0.186574 * \mathit{lcoklm}) + \\
+    & (-0.110286 * \mathit{lrunoff}) + \\
+    & (0.175157 * \mathit{watrgrc}) + \\
+    & (-0.164604 * \mathit{medstab}) + \\
+    & (-0.743144 * \mathit{perwltg}) + \\
+    & (0.004706 * \mathit{rlow}) + \\
+    & (-0.080339 * \mathit{rungrc}) + \\
+    & (0.024755 * \mathit{sdtemp})
 \end{aligned}
 \end{equation}
 
@@ -355,9 +364,9 @@ outies_binford_model <- c(54, 296, 309)
 outies_binford_model_names <- main$X[outies_binford_model]
 ```
 
-Tabelle \ref{tab:binford_model_result} enthälten Koeffizienten und zugehörige Kennwerte des erzeugten Modells. Ein Vergleich der Werte mit jenen in Gleichung \ref{eq:area_multi_log} ergibt, dass die Koeffizienten von den von Binford errechneten abweichen. Ich gehe davon aus, dass der Regressionsalgorithmus in SPSS geringfügig anders implementiert ist als derjenigen in `lm()` oder SPSS die Regression nicht mittels einfacher Reduktion der Fehlerquadrate durchführt. Unter dem Hyperonym *Robuste Regression* werden verschiedene andere Verfahren diskutiert^[@Jann2010]. Da die Werte nur geringfügig divergieren und Größenordnung sowie Vorzeichen übereinstimmen, gehe ich von einer nicht relevanten Abweichung aus, die ich hier nicht weiter diskutieren möchte. Tabelle \ref{tab:binford_model_result_2} gibt einige Kennwerte der Modellgüte und Abbildung \ref{fig:binford_model_plot} die vier diagnostischen Standardplots wieder, die die Funktionen `summary.lm()` und `plot.lm()` aus stats bereitstellen. Das Modell scheint eine hohe Erklärungspotenz zu besitzen, die abhängige Variable AREA also gut zu beschreiben. Starke Ausreißer gibt es nicht -- die überwiegende Mehrzahl der Beobachtungen wird durch das Modell gut erklärt. Nur einzelne Beobachtungen zeigen Auffälligkeiten: `r paste0(paste0(outies_binford_model, ": ", outies_binford_model_names), collapse = ", ")`. 
+Tabelle \ref{tab:binford_model_result} enthälten Koeffizienten und zugehörige Kennwerte des erzeugten Modells. Ein Vergleich der Werte mit jenen in Gleichung \ref{eq:area_multi_log} ergibt, dass die Koeffizienten von den von Binford errechneten abweichen. Ich gehe davon aus, dass der Regressionsalgorithmus in SPSS geringfügig anders implementiert ist als derjenigen in `lm()` oder SPSS die Regression nicht mittels einfacher Reduktion der Fehlerquadrate durchführt. Unter dem Hyperonym *Robuste Regression* werden verschiedene andere Verfahren diskutiert^[@Jann2010]. Da die Werte nur geringfügig divergieren und Größenordnung sowie Vorzeichen übereinstimmen, gehe ich von einer nicht relevanten Abweichung aus, die ich hier nicht weiter diskutieren möchte. Tabelle \ref{tab:binford_model_result_2} gibt einige Kennwerte der Modellgüte und Abbildung \ref{fig:binford_model_plot} die vier diagnostischen Standardplots wieder, die die Funktionen `summary.lm()` und `plot.lm()` aus stats bereitstellen. Das Modell scheint eine hohe Erklärungspotenz zu besitzen, die abhängige Variable *area* also gut zu beschreiben. Starke Ausreißer gibt es nicht -- die überwiegende Mehrzahl der Beobachtungen wird durch das Modell gut erklärt. Nur einzelne Beobachtungen zeigen Auffälligkeiten: `r paste0(paste0(outies_binford_model, ": ", outies_binford_model_names), collapse = ", ")`. 
 
-Ich möchte nun versuchen, selbst ein Modell für die Variable AREA zu erstellen. Dabei ist zu beachten, dass das Ergebnis der Multiplen Regression einerseits abhängig von den Eingabevariablen ist, andererseits aber auch -- zumindest wenn sie nicht vollständig unkorreliert sind -- von deren Eingabereihenfolge. Da im Fall der vorliegenden Analyse keine theoretischen oder sachlogischen Überlegungen Eingang finden sollen, die die Variablenauswahl determinieren würden, müssten eigentlich alle Permutationen von Auswahl und Reihenfolge betrachtet werden. Bei `r ncol(sel3) - 1` unabhängigen Variablen ist allerdings die Anzahl allein der Permutationen weit größer als praktisch in irgendeiner Form verarbeitbar ($200! \approx 7.887*10^{374}$). Aus diesem Grund muss auf ein Verfahren der Schrittweisen Regressionsanalyse zurückgegriffen werden, das mittels Prüfgrößen selbständig und in verhältnismäßig wenigen Iterationsschritten eine Variablenauswahl trifft^[@backhaus_multivariate_2008, 100-105.].  
+Ich möchte nun versuchen, selbst ein Modell für die Variable *area* zu erstellen. Dabei ist zu beachten, dass das Ergebnis der Multiplen Regression einerseits abhängig von den Eingabevariablen ist, andererseits aber auch -- zumindest wenn sie nicht vollständig unkorreliert sind -- von deren Eingabereihenfolge. Da im Fall der vorliegenden Analyse keine theoretischen oder sachlogischen Überlegungen Eingang finden sollen, die die Variablenauswahl determinieren würden, müssten eigentlich alle Permutationen von Auswahl und Reihenfolge betrachtet werden. Bei `r ncol(sel3) - 1` unabhängigen Variablen ist allerdings die Anzahl allein der Permutationen weit größer als praktisch in irgendeiner Form verarbeitbar ($200! \approx 7.887*10^{374}$). Aus diesem Grund muss auf ein Verfahren der Schrittweisen Regressionsanalyse zurückgegriffen werden, das mittels Prüfgrößen selbständig und in verhältnismäßig wenigen Iterationsschritten eine Variablenauswahl trifft^[@backhaus_multivariate_2008, 100-105.].  
 
 Ich habe mich hier für die Implementierung eines solchen Verfahrens in der Funktion `stepAIC()` des R Pakets MASS^[@venables_modern_2002, 172-177.] entschieden. `stepAIC()` erreicht die Modellreduktion durch schrittweise Minimierung der Prüfgröße AIC (Akaike Information Criterion -- $\mathit{AIC} = -2 * \mathit{maximierte} \mathit{Log-Likelihood} + 2 * \# Parameter$), die man vereinfacht als Maß für die Passgenauigkeit eines statistischen Modells verstehen kann. `stepAIC()` benötigt dafür ein berechnetes Eingangsmodell, das nach Möglichkeit nah am besten Ergebnismodell liegen sollte, sowie Modelldefinitionen jeweils eines maximal und minimal komplexen Ergebnismodells. Da das Ausgangsmodell mit `r nrow(sel3)` Beobachtungen und `r ncol(sel3)` Variablen in diesem Kontext als komplex gelten darf, möchte ich mich zunächst an folgende Empfehlung der Autoren halten, und dem Algorithmus stattdessen nur dieses Initialmodell zur Verfügung stellen.
 
@@ -411,7 +420,7 @@ init_mod_vals %>%
   kableExtra::column_spec(3, bold = TRUE)
 ```
 
-Abbildung \ref{fig:initial_model_plot} und Tabelle \ref{tab:initial_model_result_2} zeigen, dass dieses Modell auf Grundlage aller Variablen herausragende Vorhersagefähigkeiten für die Variable AREA besitzt. Gleichermaßen entbehrt es jedoch jeder fachwissenschaftlichen Aussage, da sich eine Gesamtheit von `r ncol(sel3)` semantisch höchst unterschiedlichen Variablen jeder integrativen Interpretation entzieht. Das Modell ist nicht geeignet, ein besseres Verständnis der zugrundeliegenden naturräumlichen, kulturellen und sozioökonomischen Zusammenhänge zu generieren. Erst die Vereinfachung des Modells wird die Ableitung klarer, prüfbarer Hypothesen ermöglichen.
+Abbildung \ref{fig:initial_model_plot} und Tabelle \ref{tab:initial_model_result_2} zeigen, dass dieses Modell auf Grundlage aller Variablen herausragende Vorhersagefähigkeiten für die Variable *area* besitzt. Gleichermaßen entbehrt es jedoch jeder fachwissenschaftlichen Aussage, da sich eine Gesamtheit von `r ncol(sel3)` semantisch höchst unterschiedlichen Variablen jeder integrativen Interpretation entzieht. Das Modell ist nicht geeignet, ein besseres Verständnis der zugrundeliegenden naturräumlichen, kulturellen und sozioökonomischen Zusammenhänge zu generieren. Erst die Vereinfachung des Modells wird die Ableitung klarer, prüfbarer Hypothesen ermöglichen.
 
 Entsprechend nun also ein erster Durchlauf der automatischen, schrittweisen Modellreduktion: 
 
@@ -561,11 +570,11 @@ model2 %>%
 #     variable, description
 #   )
 
-# manually identify variables, that are directly linked to AREA
+# manually identify variables, that are directly linked to area
 bad_vars <- c("density", "packinx", "prindx", "lden", "lpackinx")
 ```
 
-Das Modell, das aus diesem Algorithmus hervorgeht, erscheint im ersten Moment äußert vielversprechend. Abbildung \ref{fig:model2_plot} zeigt, dass es äußerst präzise Vorhersagen für LAREA erlaubt und -- abgesehen von wenigen, starken Ausreißern -- die Mehrzahl der Beobachtungen hervorragend erklärt. Ein Blick in Tabelle \ref{tab:model2_result} offenbart jedoch, dass das Modell im wesentlichen auf den beiden Variablen *lnpop* und *lpackinx* beruht. Die anderen Variablen haben verschwindend wenig Einfluss auf das Ergebnis. *packinx* ist eine umskalierte Variante der Bevölkerungsdichte ^[@binford_constructing_2001, 117.], die sich selbst als abhängige Größe aus Bevölkerungszahl und Arealgröße definiert. Es ist also nicht verwunderlich, dass sich die logarithmisch skalierte Variante *lpackinx* gut zur Vorhersage von *larea* eignet. Um ein Ergebnis zu erhalten, dass tatsächlich wissenschaftliche Relevanz besitzt, muss ich jene Variablen aus dem Ausgangsdatensatz entfernen, die direkt an von der Arealgröße abhängig sind. Eine kurze Durchsicht der Schlüsseldatei LRBkey reduziert auf die Auswahl metrisch skalierter Variablen, die ich oben getroffen habe, ergab dazu folgende Auswahl: `r paste(bad_vars, collapse = ", ")`. Freilich könnte man argumentieren, dass auch die Beziehung zwischen *larea* und der logarithmisch skalierten Bevölkerungszahl *lnpop*, die in Tabelle \ref{tab:model2_result} ebenfalls deutlich als relevante Vorhersagegröße angeführt wird, trivial ist und entsprechend ausgeschlossen werden könnte. Das führt allerdings zu einer fortgeschrittenen, manuellen Variablenvorauswahl. Eine solche kann Fragestellungsbezogen durchaus sinnvoll sein, wurde hier aber bewusst vermieden. Die Abwesenheit von *lpackinx* und *lnpop* in Binfords Ergebnismodell (siehe \ref{eq:area_multi_log}) spricht dafür, dass Binford eine solche getroffen hat, ohne das explizit zu kommunizieren. Darauf soll unten noch einmal eingegangen werden.
+Das Modell, das aus diesem Algorithmus hervorgeht, erscheint im ersten Moment äußert vielversprechend. Abbildung \ref{fig:model2_plot} zeigt, dass es äußerst präzise Vorhersagen für *larea* erlaubt und -- abgesehen von wenigen, starken Ausreißern -- die Mehrzahl der Beobachtungen hervorragend erklärt. Ein Blick in Tabelle \ref{tab:model2_result} offenbart jedoch, dass das Modell im wesentlichen auf den beiden Variablen *lnpop* und *lpackinx* beruht. Die anderen Variablen haben verschwindend wenig Einfluss auf das Ergebnis. *packinx* ist eine umskalierte Variante der Bevölkerungsdichte ^[@binford_constructing_2001, 117.], die sich selbst als abhängige Größe aus Bevölkerungszahl und Arealgröße definiert. Es ist also nicht verwunderlich, dass sich die logarithmisch skalierte Variante *lpackinx* gut zur Vorhersage von *larea* eignet. Um ein Ergebnis zu erhalten, dass tatsächlich wissenschaftliche Relevanz besitzt, muss ich jene Variablen aus dem Ausgangsdatensatz entfernen, die direkt an von der Arealgröße abhängig sind. Eine kurze Durchsicht der Schlüsseldatei LRBkey reduziert auf die Auswahl metrisch skalierter Variablen, die ich oben getroffen habe, ergab dazu folgende Auswahl: `r paste(bad_vars, collapse = ", ")`. Freilich könnte man argumentieren, dass auch die Beziehung zwischen *larea* und der logarithmisch skalierten Bevölkerungszahl *lnpop*, die in Tabelle \ref{tab:model2_result} ebenfalls deutlich als relevante Vorhersagegröße angeführt wird, trivial ist und entsprechend ausgeschlossen werden könnte. Das führt allerdings zu einer fortgeschrittenen, manuellen Variablenvorauswahl. Eine solche kann Fragestellungsbezogen durchaus sinnvoll sein, wurde hier aber bewusst vermieden. Die Abwesenheit von *lpackinx* und *lnpop* in Binfords Ergebnismodell (siehe \ref{eq:area_multi_log}) spricht dafür, dass Binford eine solche getroffen hat, ohne das explizit zu kommunizieren. Darauf soll unten noch einmal eingegangen werden.
 
 Zunächst nun also ein Blick auf das Modell, das sich ergibt, wenn man die beschriebene Variablenvorauswahl trifft und noch einmal die Arbeitschritte des `stepAIC()`- und `dropterm()`-Algorithmus wiederholt.
 
