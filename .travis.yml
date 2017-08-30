@@ -13,15 +13,20 @@ repos:
 #    packages:
 #    # install microsoft fonts
 #    - ttf-mscorefonts-installer
+
+before_install:
+  - tlmgr install babel-german
+  - tlmgr install ngerman
+  - tlmgr install german
     
 before_script:
     # install microsoft fonts
     - echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | sudo debconf-set-selections
     - sudo apt-get install ttf-mscorefonts-installer
-    # install tex german language package
-    - sudo apt-get install texlive-lang-german
     # rebuild font cache
     - sudo fc-cache
+    # install tex german language package
+    # - sudo apt-get install texlive-lang-german
     
 script:
   # install package
