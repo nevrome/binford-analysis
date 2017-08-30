@@ -86,7 +86,7 @@ tibble::tribble(
   kableExtra::kable_styling(font_size = 9)
 ```
 
-Binford hat seine Analyse in SPSS (Version 6.1.2) ausgeführt. Ein Skriptprotokoll der Analysesession liegt mir nicht vor. Um die Ergebnis in Form der Modellgleichung zu reproduzieren, werde ich nun also zunächst versuchen, das Vorgehen so gut wie möglich nachzuvollziehen. Dafür steht mir eine hoffentlich gleiche oder zumindest hochgradig ähnliche Version des oben beschriebene Gruppendatensatz zu Verfügung. Ich weiß weiterhin, dass Binford sein Modell mittels der Methode schrittweiser, Multipler Regression ermittelt hat. Unabhängige Variablen, die sich kollinear zu anderen unabhägigen Variablen verhalten, hat er entfernt. Die abschließende Entscheidung über das beste Modell gibt er an unter Beachtung von den Indikatorgrößen $R^2$ und Standardfehler getroffen zu haben. 
+Binford hat seine Analyse in SPSS (Version 6.1.2) ausgeführt. Ein Skriptprotokoll der Analysesession liegt mir nicht vor. Um die Ergebnis in Form der Modellgleichung zu reproduzieren, werde ich nun also zunächst versuchen, das Vorgehen so gut wie möglich nachzuvollziehen. Dafür steht mir eine hoffentlich gleiche oder zumindest hochgradig ähnliche Version des oben beschriebene Gruppendatensatz zu Verfügung. Ich weiß weiterhin, dass Binford sein Modell mit der Methode schrittweiser, Multipler Regression ermittelt hat. Unabhängige Variablen, die sich kollinear zu anderen unabhägigen Variablen verhalten, hat er entfernt. Die abschließende Entscheidung über das beste Modell hat er unter Beachtung der Indikatorgrößen $R^2$ und Standardfehler getroffen. Diese Angaben sind leider nicht hinreichend präzise.
 
 ## Datensatz
 
@@ -281,7 +281,7 @@ sel3 <- sel2 %>%
 
 ## Multiple Regression
 
-Multiple Lineare Regression ist ein Verfahren der Multivariaten Statistik, das die Erklärung und Vorhersage einer abhängigen Variable durch mehrere unabhängige Variablen erlaubt^[@backhaus_multivariate_2008, 52-53/64-65.]. Regressionsparameter können wie bei der Einfachen Regressionsanalyse durch Reduktion der Fehlerquadrate berechnet werden. In einem ersten Schritt möchte ich das Modell von Binford nachstellen, indem ich seine Auswahl an Eingabevariablen übernehme und die Regression mittels der Funktion `lm()` aus dem R Basispaket stats darauf anwende. 
+Multiple Lineare Regression ist ein Verfahren der Multivariaten Statistik, das die Erklärung und Vorhersage einer abhängigen Variable durch mehrere unabhängige Variablen erlaubt^[@backhaus_multivariate_2008, 52-53/64-65., @de_veaux_stats:_2012, 784-812.]. Regressionsparameter können wie bei der Einfachen Regressionsanalyse durch Reduktion der Fehlerquadrate berechnet werden. In einem ersten Schritt möchte ich das Modell von Binford nachstellen, indem ich seine Auswahl an Eingabevariablen übernehme und die Regression mittels der Funktion `lm()` aus dem R Basispaket stats darauf anwende. 
 
 ```{r recreate binford model, echo=TRUE, cache=TRUE}
 binford_model <- lm(
@@ -705,7 +705,7 @@ fin_mod_vals %>%
 \end{aligned}
 \end{equation}
 
-Aus Tabelle \ref{tab:model4_result} (und Gleichung \ref{eq:area_final}) wird ersichtlich, dass dieses Modell nun auf einer wesentlich diverseren Auswahl unabhängiger Variablen fußt. Abbildung \ref{fig:model4_plot} und Tabelle \ref{tab:model4_result_2} belegen jedoch, dass es sich um ein solides Modell handelt. Den Kennwerten in Tabelle \ref{tab:binford_model_result_2} nach zu urteilen, scheint es wesentlich bessere Vorhersagen zu treffen als Binfords Modell. Ich möchte damit also den Reproduktionsversuch abschließen und die Ergebnisse diskutieren.
+Aus Tabelle \ref{tab:model4_result} (und Gleichung \ref{eq:area_final}) wird ersichtlich, dass dieses Modell nun auf einer wesentlich diverseren Auswahl unabhängiger Variablen fußt. Abbildung \ref{fig:model4_plot} und Tabelle \ref{tab:model4_result_2} belegen jedoch, dass es sich um ein solides Modell handelt. Den Kennwerten in Tabelle \ref{tab:binford_model_result_2} nach zu urteilen, scheint es wesentlich bessere Vorhersagen zu treffen als Binfords Modell: Während das Modell, das ich auf Grundlage von Binfords Variablenauswahl ermittelt habe nur ($R^2 \approx$) `r round(summary(binford_model)$r.squared * 100, 1)`% der Variabilität in *larea* erklären konnte, kommt dieses Modell auf `r round(summary(model4)$r.squared * 100, 1)`%! Ich möchte damit also den Reproduktionsversuch abschließen und die Ergebnisse diskutieren.
 
 ```{r child = 'binford_discussion.Rmd'}
 ```

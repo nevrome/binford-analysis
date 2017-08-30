@@ -11,7 +11,7 @@ csl: deutsches-archaologisches-institut.csl
 
 # Datensätze
 
-Binford's komplexes Unterfangen erfordert Forschungsdaten, die sowohl für Kultur- als auch Naturphänomene ein möglichst breites Set an Observationen enthalten. Dabei muss einerseits die Anzahl als auch die Variabilität der Beobachtungen ausreichend groß, andererseits auch ein sinnvolles Set an Kennwerten und Proxies erfasst sein. Die Zusammenstellung der anthropologischen Daten ist besonders problematisch, da der Vergleich eine selten angewandte Systematisierung ethnographischer Datenaufnahme erfordert. 
+Binford's komplexes Unterfangen erfordert Forschungsdaten, die sowohl für Kultur- als auch Naturphänomene ein möglichst breites Set an Observationen enthalten. Dabei muss einerseits die Anzahl als auch die Variabilität der Beobachtungen ausreichend groß, andererseits auch ein sinnvolles Set an Kennwerten und Proxies erfasst sein. Die Zusammenstellung der anthropologischen Daten ist besonders problematisch, da der Vergleich eine selten angewandte Systematisierung ethnographischer Datenaufnahme erfordert.
 
 > It took me two years to develop the data bases dealing with the world's environments and the geographical distribution of documented hunter-gatherers. Once this aspect of the work was completed, it became clear that the limited range of hunter-gatherer characteristics upon which cross-cultural studies had focused was not really relevant to most of the issues that I hoped to address in my book.
 >  

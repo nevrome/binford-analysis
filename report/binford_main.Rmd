@@ -50,6 +50,7 @@ knitr::opts_chunk$set(echo = FALSE)
 ```{r child = 'binford_tale_1.Rmd'}
 ```
 
+\newpage
 
 ```{r child = 'binford_end.Rmd'}
 ```
