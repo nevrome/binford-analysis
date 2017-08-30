@@ -16,8 +16,8 @@ repos:
 
 before_install:
   - tlmgr install babel-german
-  - tlmgr install ngerman
-  - tlmgr install german
+  #- tlmgr install ngerman
+  #- tlmgr install german
     
 before_script:
     # install microsoft fonts
