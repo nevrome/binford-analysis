@@ -54,6 +54,4 @@ knitr::opts_chunk$set(echo = FALSE)
 ```{r child = 'binford_end.Rmd'}
 ```
 
-\newpage
-
 \section{Literatur}
