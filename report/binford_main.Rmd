@@ -19,8 +19,8 @@ output:
     latex_engine: xelatex
     includes:  
       in_header: preamble-latex.tex
-    #keep_tex: yes
-geometry: margin=1.5cm
+    keep_tex: yes
+geometry: "left=0.90cm,right=0.90cm,top=1.45cm,bottom=1.5cm"
 bibliography: bibliography.bib
 mainfont: "Arial"
 csl: https://www.zotero.org/styles/chicago-author-date-de
