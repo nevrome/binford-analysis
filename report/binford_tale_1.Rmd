@@ -648,7 +648,7 @@ model4 %>%
   ) %>%
   knitr::kable(
     format = "latex",
-    caption = "\\label{tab:model4_result}Modellergebnis.",
+    caption = "\\label{tab:model4_result}Ergebniszusammenfassung für die einzelnen Koeffizienten des finalen Modells, das durch erneute Anwendung des ‘stepAIC()‘- und ‘dropterm()‘-Algorithmus auf ein Modell mit leicht reduzierter Variablenauswahl ermittelt wurde. Alle Werte sind auf drei Nachkommastellen gerundet..",
     booktabs = T
   ) %>%
   kableExtra::column_spec(1, bold = TRUE)
