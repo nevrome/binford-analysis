@@ -14,7 +14,7 @@ csl: deutsches-archaologisches-institut.csl
 
 # Einleitung und Kontextualisierung
 
-Lewis R. Binfords umstrittenes Spätwerk *Constructing Frames of Reference* ist eines der wichtigsten Standardwerke der New Archaeology. Es versteht sich selbst als Methodikstudie zur induktiven Ableitung allgemeiner Regeln menschlichen Verhaltens aus ethnographischen Umwelt- und Sozialdatensätzen, erarbeitet aber am Fallbeispiel eines Datensatzen zu Jäger- und Sammlergruppen gleichermaßen inhaltlich relevante Ergebnisse. 
+Lewis R. Binfords umstrittenes Spätwerk *Constructing Frames of Reference* ist eines der wichtigsten Standardwerke der New Archaeology. Es versteht sich selbst als Methodikstudie zur induktiven Ableitung allgemeiner Regeln menschlichen Verhaltens aus ethnographischen Umwelt- und Sozialdatensätzen, erarbeitet aber am Fallbeispiel eines Datensatzes zu Jäger- und Sammlergruppen gleichermaßen inhaltlich relevante Ergebnisse. 
 
 Binford fasst seine methodischen Ambitionen folgendermaßen zusammen:
 
