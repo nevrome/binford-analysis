@@ -396,40 +396,6 @@ plot(initial_model)
 par(opar) 
 ```
 
-```{r initial model estimate table 2, cache=TRUE, dependson="create initial model"}
-init_mod_vals <- initial_model %>%
-  broom::glance() %>%
-  tidyr::gather(var, value) %>% 
-  dplyr::mutate(
-    var2 = c(var[7:11], rep(NA, 6)),
-    value2 = c(value[7:11], rep(NA, 6))
-  ) %>%
-  magrittr::extract(1:5,) %>%
-  dplyr::mutate_if(
-    is.numeric,
-    dplyr::funs(round(., 3))
-  ) %>% dplyr::mutate_if(
-    is.numeric,
-    as.character
-  ) %>%
-  dplyr::rename(
-    " " = "var",
-    " " = "var2",
-    "value" = "value2"
-  )
-
-init_mod_vals[is.na(init_mod_vals)] <- ""
-
-init_mod_vals %>%
-  knitr::kable(
-    format = "latex",
-    caption = "\\label{tab:initial_model_result_2}Ergebniszusammenfassung des initialen Modells. Alle Werte sind auf drei Nachkommastellen gerundet.",
-    booktabs = T
-  ) %>%
-  kableExtra::column_spec(1, bold = TRUE) %>%
-  kableExtra::column_spec(3, bold = TRUE)
-```
-
 Abbildung \ref{fig:initial_model_plot} und Tabelle \ref{tab:initial_model_result_2} zeigen, dass dieses Modell auf Grundlage aller Variablen herausragende Vorhersagefähigkeiten für die Variable *area* besitzt. Gleichermaßen entbehrt es jedoch jeder fachwissenschaftlichen Aussage, da sich eine Gesamtheit von `r ncol(sel3)` semantisch höchst unterschiedlichen Variablen jeder integrativen Interpretation entzieht. Das Modell ist nicht geeignet, ein besseres Verständnis der zugrundeliegenden naturräumlichen, kulturellen und sozioökonomischen Zusammenhänge zu generieren. Erst die Vereinfachung des Modells wird die Ableitung klarer, prüfbarer Hypothesen ermöglichen.
 
 Entsprechend nun also ein erster Durchlauf der automatischen, schrittweisen Modellreduktion: 
@@ -515,6 +481,40 @@ MASS::dropterm(model1, test = "F") %>%
     booktabs = T
   ) %>%
   kableExtra::column_spec(1, bold = TRUE)
+```
+
+```{r initial model estimate table 2, cache=TRUE, dependson="create initial model"}
+init_mod_vals <- initial_model %>%
+  broom::glance() %>%
+  tidyr::gather(var, value) %>% 
+  dplyr::mutate(
+    var2 = c(var[7:11], rep(NA, 6)),
+    value2 = c(value[7:11], rep(NA, 6))
+  ) %>%
+  magrittr::extract(1:5,) %>%
+  dplyr::mutate_if(
+    is.numeric,
+    dplyr::funs(round(., 3))
+  ) %>% dplyr::mutate_if(
+    is.numeric,
+    as.character
+  ) %>%
+  dplyr::rename(
+    " " = "var",
+    " " = "var2",
+    "value" = "value2"
+  )
+
+init_mod_vals[is.na(init_mod_vals)] <- ""
+
+init_mod_vals %>%
+  knitr::kable(
+    format = "latex",
+    caption = "\\label{tab:initial_model_result_2}Ergebniszusammenfassung des initialen Modells. Alle Werte sind auf drei Nachkommastellen gerundet.",
+    booktabs = T
+  ) %>%
+  kableExtra::column_spec(1, bold = TRUE) %>%
+  kableExtra::column_spec(3, bold = TRUE)
 ```
 
 Ich möchte das Vorgehen, mit `dropterm()` schrittweise Variablen zu entfernen automatisieren und dann so oft wiederholt zur Anwendung bringen, bis die Anzahl der Variablen im Ergebnismodell der in Binfords Modell entspricht. Dafür habe ich einen simplen Algorithmus formuliert, der in einer Schleife die `dropterm()`-Funktion ausführt, die Variable mit dem größten p-Wert identifiziert und diese dann dann für den nächsten Schleifendurchlauf aus dem Modell entfernt. 
