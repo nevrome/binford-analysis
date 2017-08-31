@@ -93,3 +93,53 @@ Die von mir entwickelte Modellgleichung \ref{eq:area_final} erlaubt ebenfalls ei
 Weder Binfords noch mein Modell können alle Aspekte erklären oder auch nur benennen, die die Größe des Ausbreitungsareals einer Jäger- und Sammlergruppe beeinflussen. Einige Trends, wie die Verringerung in Küstennähe, in durchsatzreichen Ökosystemen in niedereren Breiten oder bei kleinen Bevölkerungszahlen lassen sich aber gut erkennen. Diese Faktoren scheinen signifikanten Einfluss auf die Variable *larea* zu nehmen. Der Versuch, Binfords Modell zu rekonstruieren, hat also zur Bestätigung einiger Grundüberlegungen geführt. Freilich ist weitere Forschung erforderlich, um den Einfluss dieser Größen besser quantitativ zu fassen. 
 
 Wie im Rahmen der Modellbildung oben angedeutet, ist weder der von Binford noch der von mir applizierte Algorithmus zufriedenstellend. Eine Vorauswahl nach den oben eingeführten vier Kriterien (Linearität, Unabhängigkeit, Varianzäquivalenz und Normalität) wäre sicher sinnvoll, um völlig ungeeignete Variablen auszuschließen. Zumindest die Variablen im Ergebnismodell hätte ich gerne einer solchen Prüfung unterzogen, ich musste aber aus Zeitgründen darauf verzichten. Im Prozess der schrittweisen Vereinfachung des Ausgangsmodells führt die Reduktion wie ich sie durchgeführt habe (und Binford lässt nicht erkennen, dass er dieses Problem besser gelöst hätte) zu einem "Ziehen-ohne-Zurücklegen". Diese selektive Tiefensuche im Baum der Variablenkombinationen kann den Verlust wesentlicher Einflussgrößen aus dem Analysekontext zur Konsequenz haben. `stepAIC()` ist zwar theoretisch in der Lage, ein "Ziehen-mit-Zurücklegen" durchzuführen, in meinen beiden Durchläufen hat die Funktion allerdings in keinem Schritt die Entscheidung getroffen, eine vormals entfernte Variable wieder hinzuzufügen. Möglicherweise würde sich das bei einer besseren Vorauswahl der Variablen verändern. Zuletzt bleibt die Frage, ob Multiple Regression überhaupt die beste Methode ist, um jene Einflussgrößen zu identifizieren, die die Arealgröße von Jäger- und Sammlergruppen maßgeblich determinieren. 
+
+```{r pearson, cache=TRUE, message=FALSE, warning=FALSE, fig.height=17, fig.cap="\\label{fig:pearson_indi_plots}Bivariate Relationen der Variable *larea* und den 10 Variablen, die mit *larea* den höchsten Korrelationskoeffizienten nach Pearson teilen. Mit angegeben ist der Koeffizient auf fünf Nachkommastellen gerundet."}
+# helper function to reduce correlation matrix
+diagi <- function(x){x[lower.tri(x)] <- NA; return(x)}
+
+# calculate pearsons coefficient for every variable relation but reduce the 
+# colllection to the ten variables with the biggest value
+high_cor <- sel5 %>%
+  cor() %>%
+  as.matrix() %>%
+  diagi() %>%
+  reshape2::melt(.) %>%
+  dplyr::arrange(-abs(value)) %>%
+  dplyr::filter(
+    !is.na(value) &
+    (Var1 == "larea" | Var2 == "larea") &
+    !(Var1 == "larea" & Var2 == "larea")
+  ) %>%
+  magrittr::extract(1:10,)
+
+# extract individuel partner variables of larea
+pearson_selection <- c(as.character(high_cor$Var1), as.character(high_cor$Var2)) %>%
+  unique %>%
+  magrittr::extract(. != "larea")
+
+# get correct correlation coefficient values for the variables
+pearson_vals <- lapply(pearson_selection, function(x){
+  high_cor[,3][which(high_cor[1] == x | high_cor[2] == x)]
+  }) %>% unlist
+
+# create df only with selection
+sel8 <- sel3 %>% dplyr::select(
+  pearson_selection
+) 
+
+# loop to create all scatterplots of larea with the other variables
+pearson_indi_plots <- lapply(
+  seq_along(sel8),
+  function(x){
+    ggplot(data = sel3, aes(sel8[x], larea)) +
+      geom_point() +
+      geom_smooth(color = "red") +
+      xlab(paste0(names(sel8[x]), " (", round(pearson_vals[x], 5), ")")) +
+      theme_bw()
+  }
+)
+
+# merge individual plots to big figure (plot matrix)
+cowplot::plot_grid(plotlist = pearson_indi_plots, ncol = 2)
+```
