@@ -19,7 +19,7 @@ output:
     latex_engine: xelatex
     includes:  
       in_header: preamble-latex.tex
-    keep_tex: yes
+    #keep_tex: yes
 geometry: "left=0.90cm,right=0.90cm,top=1.45cm,bottom=1.5cm"
 bibliography: bibliography.bib
 mainfont: "Arial"
