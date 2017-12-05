@@ -1,10 +1,10 @@
 Package: binfordanalysis
 Type: Package
-Title: binford
+Title: Seminar Paper "Reconstructing Frames of Reference"
 Version: 0.1.0
 Authors@R: person("Clemens", "Schmid", email = "clemens@nevrome.de", role = c("aut", "cre"))
 Maintainer: Clemens Schmid <clemens@nevrome.de>
-Description: binford.
+Description: Paper to understand, reproduce and improve one specific model from Lewis Binfords Book *Constructing Frames of Reference: An Analytical Method for Archaeological Theory Building using Ethnographic and Environmental Data Sets* from 2001.
 Date: 2017-08-08
 License: GPL-2 | file LICENSE
 Encoding: UTF-8
