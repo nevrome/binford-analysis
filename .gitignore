@@ -37,3 +37,4 @@ vignettes/*.pdf
 report/*.pdf
 report/*_cache
 report/*_files
+!report/binford_main.pdf
